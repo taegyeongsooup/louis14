@@ -419,6 +419,16 @@ button:focus-visible,input:focus-visible{outline:2px solid rgba(222,196,127,.78)
   .game-screen.card-long .card-text{font-size:.80rem;line-height:1.48}
 }
 
+
+
+/* v0.18: ranking cache/refresh + survival-weighted scoring */
+.ranking-heading-actions{display:flex;align-items:center;gap:7px}
+.ranking-refresh-btn{border:1px solid rgba(214,189,122,.20);background:rgba(188,163,106,.055);color:#cbb98e;border-radius:999px;padding:5px 9px;font-size:.62rem;font-weight:900;line-height:1;cursor:pointer;transition:background .15s,border-color .15s,opacity .15s}
+.ranking-refresh-btn:hover{background:rgba(188,163,106,.11);border-color:rgba(214,189,122,.38)}
+.ranking-refresh-btn:disabled{opacity:.52;cursor:default}
+.ranking-refresh-btn.refreshing{animation:rankingPulse .8s ease-in-out infinite alternate}
+@keyframes rankingPulse{from{opacity:.48}to{opacity:1}}
+
 </style>
 </head>
 <body>
@@ -457,7 +467,10 @@ button:focus-visible,input:focus-visible{outline:2px solid rgba(222,196,127,.78)
             <div>
               <h2>랭킹</h2>
             </div>
-            <span class="rank-live-badge">TOP 10</span>
+            <div class="ranking-heading-actions">
+              <span class="rank-live-badge">TOP 10</span>
+              <button id="loginRankingRefreshBtn" class="ranking-refresh-btn" type="button" aria-label="랭킹 새로고침">↻ 새로고침</button>
+            </div>
           </div>
           <div class="ranking-switch login-ranking-switch" role="tablist" aria-label="로그인 화면 랭킹 종류">
             <button class="ranking-switch-btn login-ranking-tab active" data-mode="best" type="button">최고 기록</button>
@@ -880,7 +893,7 @@ const TITLES = [
   const els = Object.fromEntries([
     "loginScreen","homeScreen","gameScreen","audienceScreen","resultScreen","titleBookScreen",
     "loginForm","studentNo","studentName","studentPin","loginMessage","profileName","logoutBtn","startBtn",
-    "homeBestScore","homeTotalScore","homeRuns","homeCompleted","homeRankingList","loginRankingList","titleBookBtn","quitRunBtn",
+    "homeBestScore","homeTotalScore","homeRuns","homeCompleted","homeRankingList","loginRankingList","loginRankingRefreshBtn","titleBookBtn","quitRunBtn",
     "yearLabel","turnLabel","statBar","unrestHint","eventBanner","decisionCard","leftChoiceOverlay","rightChoiceOverlay",
     "characterImage","characterFallback","speakerRole","speakerName","cardTitle","cardText","leftTapBtn","rightTapBtn",
     "audienceTurnLabel","audienceStatBar","audienceGrid","resultYear","resultHeadline","resultCause","resultScore","resultGrade","resultScoreNote","resultMainTitle",
@@ -933,6 +946,59 @@ const TITLES = [
     "궁정 관리":"assets/characters/court_official.png", "왕실 집사":"assets/characters/court_official.png"
   };
   function imageForCard(card) { return card.image || SPEAKER_IMAGE_MAP[card.speaker] || ""; }
+
+  // 모바일에서 다음 카드의 인물 사진이 뒤늦게 나타나는 현상을 줄이기 위한 이미지 선로딩.
+  // 현재 카드를 읽는 동안 가까운 다음 카드/후속 사건/특별 알현 후보 이미지만 미리 받는다.
+  const IMAGE_PRELOAD_CACHE = new Map();
+
+  function preloadImage(src) {
+    if (!src) return Promise.resolve(false);
+    if (IMAGE_PRELOAD_CACHE.has(src)) return IMAGE_PRELOAD_CACHE.get(src);
+
+    const task = new Promise(resolve=>{
+      const img = new Image();
+      img.decoding = "async";
+      img.onload = ()=>resolve(true);
+      img.onerror = ()=>resolve(false);
+      img.src = src;
+    });
+    IMAGE_PRELOAD_CACHE.set(src, task);
+    return task;
+  }
+
+  function preloadCards(cards) {
+    const sources = [...new Set((cards||[]).map(imageForCard).filter(Boolean))];
+    sources.forEach(preloadImage);
+  }
+
+  function preloadUpcomingImages() {
+    if (!run || run.ended) return;
+    const cards = [];
+
+    // 앞으로 3턴 안에 등장할 일반 카드 이미지를 미리 받는다.
+    for (let t=run.turn+1; t<=Math.min(20,run.turn+3); t++) {
+      if ([5,10,15,20].includes(t)) {
+        // 특별 알현은 실제로 누가 뽑힐지 미리 확정하지 않고 후보 풀만 선로딩한다.
+        (AUDIENCE_POOL_BY_TURN[t]||[]).forEach(id=>{ if (CARD_BY_ID[id]) cards.push(CARD_BY_ID[id]); });
+      } else {
+        const id = run.deck?.[t];
+        if (id && CARD_BY_ID[id]) cards.push(CARD_BY_ID[id]);
+      }
+    }
+
+    // 이미 예약되어 있고 3턴 안에 돌아올 후속 사건도 함께 미리 받는다.
+    (run.scheduled||[]).forEach(item=>{
+      if (!item.done && item.dueTurn <= run.turn+3 && CARD_BY_ID[item.id]) cards.push(CARD_BY_ID[item.id]);
+    });
+    (run.dueQueue||[]).forEach(item=>{
+      if (CARD_BY_ID[item.id]) cards.push(CARD_BY_ID[item.id]);
+    });
+
+    preloadCards(cards);
+  }
+
+  // 첫 턴의 서기관 이미지는 첫 화면에서부터 미리 받아 둔다.
+  preloadCards([CARD_BY_ID[1]]);
 
   const TITLE_HINTS = {
     balanced_sun:"S등급·모든 지표 65 이상·혁명도 20 이하",
@@ -1220,6 +1286,7 @@ const TITLES = [
 
   function showAudience() {
     const ids=audienceIdsForTurn(run.turn);
+    preloadCards(ids.map(id=>CARD_BY_ID[id]).filter(Boolean));
     els.audienceTurnLabel.textContent=`TURN ${run.turn}`;
     renderStatSnapshot(els.audienceStatBar);
     els.audienceGrid.innerHTML="";
@@ -1275,10 +1342,17 @@ const TITLES = [
     els.characterImage.removeAttribute("src");
     const portraitSrc=imageForCard(card);
     if (portraitSrc) {
-      els.characterImage.src=portraitSrc;
+      // 이미 선로딩이 끝난 이미지는 onload 한 틱을 기다리지 않고 즉시 표시한다.
       els.characterImage.onload=()=>els.characterImage.classList.remove("hidden");
       els.characterImage.onerror=()=>els.characterImage.classList.add("hidden");
+      els.characterImage.src=portraitSrc;
+      if (els.characterImage.complete && els.characterImage.naturalWidth > 0) {
+        els.characterImage.classList.remove("hidden");
+      }
     }
+
+    // 플레이어가 이 카드를 읽는 동안 다음 이미지들을 백그라운드에서 준비한다.
+    preloadUpcomingImages();
 
     els.leftTapBtn.classList.add("hidden");
     els.rightTapBtn.classList.add("hidden");
@@ -1596,14 +1670,27 @@ const TITLES = [
   }
 
   function scoreRun(turnReached) {
-    // TURN 10 이전에 끝난 통치는 기록은 남기되 랭킹 점수를 얻지 못한다.
+    // TURN 10 이전 종료는 기록만 남기고 랭킹 점수는 0점.
+    // TURN 10 이후에는 "얼마나 오래 버텼는가"가 점수의 중심이 되도록 설계한다.
+    // 따라서 상태가 비교적 좋은 채 일찍 무너지는 것보다, 손해를 감수하며 후반까지 통치한 편이 유리하다.
     if (turnReached < 10) return 0;
+
+    const t=Math.max(10,Math.min(20,turnReached));
     const sum=STAT_KEYS.reduce((a,k)=>a+run.stats[k],0);
     const min=Math.min(...STAT_KEYS.map(k=>run.stats[k]));
-    const base = sum*1.2 + min*2 + (100-run.unrest)*2;
-    const completion=Math.max(10,Math.min(20,turnReached))/20;
-    const factor=.4+.6*completion;
-    return Math.max(0,Math.round(base*factor));
+    const stability=Math.max(0,100-run.unrest);
+
+    // 국가 상태: 최대 약 440점. 한 지표가 0이 되면 최저 지표 보너스가 사라진다.
+    const stateScore = sum*0.55 + min*1.0 + stability*0.65;
+
+    // 생존 점수: TURN 10 = 30점, 이후 한 턴마다 +40점. TURN 20 = 430점.
+    // 후반 진입 자체에 충분한 가치를 주어 조기 사망 점수 파밍을 막는다.
+    const survivalScore = 30 + (t-10)*40;
+
+    // 20턴 완주에는 소폭의 완주 보너스를 더한다.
+    const completionBonus = t>=20 && run.completed ? 35 : 0;
+
+    return Math.max(0,Math.round(stateScore + survivalScore + completionBonus));
   }
   function gradeFor(score){return score>=690?"S":score>=630?"A":score>=560?"B":score>=490?"C":score>=420?"D":"E"}
   function similarityInfo() {
@@ -1686,7 +1773,7 @@ const TITLES = [
       return `<div class="history-row ${state}"><div class="history-label">${escapeHtml(r.label)}</div><div class="history-cell louis-history">${louisText}</div><div class="history-cell player-history"><span class="history-state">${playerText}</span></div></div>`;
     }).join("");
     showScreen("resultScreen");
-    const ranks=await getRankings();
+    const ranks=await preloadRankingsForLogin(true);
     els.resultBestRank.textContent=formatRank(findRank(ranks.best,currentProfile.studentNo,currentProfile.name));
     els.resultTotalRank.textContent=formatRank(findRank(ranks.total,currentProfile.studentNo,currentProfile.name));
   }
@@ -1694,9 +1781,34 @@ const TITLES = [
   function roman(n){return ["","Ⅰ","Ⅱ","Ⅲ","Ⅳ","Ⅴ"][n]||""}
   function tierName(n){return ["","일반","고급","희귀","영웅","전설"][n]||""}
 
-  async function getRankings() {
-    if(endpoint){const r=await remoteCall("rankings");if(r?.profiles)return rankingsFromProfiles(r.profiles)}
-    return rankingsFromProfiles(Object.values(getUsers()));
+  let rankingsCache=null;
+  let rankingsCacheAt=0;
+  let rankingsLoadingPromise=null;
+
+  async function getRankings({force=false}={}) {
+    if(!force && rankingsCache) return rankingsCache;
+    if(!force && rankingsLoadingPromise) return rankingsLoadingPromise;
+
+    rankingsLoadingPromise=(async()=>{
+      let ranks;
+      if(endpoint){
+        const r=await remoteCall("rankings");
+        if(r?.profiles) ranks=rankingsFromProfiles(r.profiles);
+      }
+      if(!ranks) ranks=rankingsFromProfiles(Object.values(getUsers()));
+      rankingsCache=ranks;
+      rankingsCacheAt=Date.now();
+      return ranks;
+    })();
+
+    try{return await rankingsLoadingPromise;}
+    finally{rankingsLoadingPromise=null;}
+  }
+
+  function preloadRankingsForLogin(force=false) {
+    // 결과 화면을 보고 있는 동안 로그인 화면용 TOP 10을 미리 받아 둔다.
+    // 사용자가 로그인 화면으로 돌아갔을 때 '불러오는 중' 화면을 다시 보지 않게 한다.
+    return getRankings({force}).catch(err=>{console.warn("Ranking preload failed",err);return rankingsCache;});
   }
   function rankingsFromProfiles(profiles) {
     const usable=profiles.filter(p=>(p.totalRuns||0)>0);
@@ -1728,13 +1840,35 @@ const TITLES = [
     els.homeRankingList.innerHTML=rankingMarkup(ranks[mode],mode,5);
   }
 
-  async function renderLoginRanking(mode=loginRankingMode) {
+  async function renderLoginRanking(mode=loginRankingMode,{force=false}={}) {
     loginRankingMode=mode;
     document.querySelectorAll(".login-ranking-tab").forEach(b=>b.classList.toggle("active",b.dataset.mode===mode));
     if(!els.loginRankingList) return;
-    els.loginRankingList.innerHTML=`<div class="empty-state compact">랭킹을 불러오는 중입니다.</div>`;
-    const ranks=await getRankings();
+
+    // 미리 받아 둔 랭킹이 있으면 즉시 그려서 로그인 화면 진입 지연을 없앤다.
+    if(rankingsCache && !force) {
+      els.loginRankingList.innerHTML=rankingMarkup(rankingsCache[mode],mode,10);
+      return;
+    }
+
+    if(!rankingsCache) els.loginRankingList.innerHTML=`<div class="empty-state compact">랭킹을 불러오는 중입니다.</div>`;
+    const ranks=await getRankings({force});
     els.loginRankingList.innerHTML=rankingMarkup(ranks[mode],mode,10);
+  }
+
+  async function refreshLoginRanking() {
+    if(!els.loginRankingRefreshBtn) return;
+    const btn=els.loginRankingRefreshBtn;
+    btn.disabled=true;
+    btn.classList.add("refreshing");
+    btn.textContent="↻ 갱신 중";
+    try{
+      await renderLoginRanking(loginRankingMode,{force:true});
+    } finally {
+      btn.disabled=false;
+      btn.classList.remove("refreshing");
+      btn.textContent="↻ 새로고침";
+    }
   }
 
   function renderTitleBook(){
@@ -1781,6 +1915,10 @@ const TITLES = [
     els.loginMessage.textContent="";
     showScreen("loginScreen");
     renderLoginRanking(loginRankingMode);
+    // 결과 화면에서 최신 랭킹을 받는 중이었다면, 기존 캐시를 즉시 보여 준 뒤
+    // 요청이 끝나는 순간 화면만 조용히 최신 상태로 교체한다.
+    if(rankingsLoadingPromise) rankingsLoadingPromise.then(()=>renderLoginRanking(loginRankingMode)).catch(()=>{});
+    else if(!rankingsCache || Date.now()-rankingsCacheAt>60000) preloadRankingsForLogin(true).then(()=>renderLoginRanking(loginRankingMode));
     setTimeout(()=>{
       if (els.studentPin.value) els.loginForm.querySelector('button[type="submit"]')?.focus();
       else els.studentPin.focus();
@@ -1817,6 +1955,7 @@ const TITLES = [
   });
   document.querySelectorAll(".home-ranking-tab").forEach(b=>b.addEventListener("click",()=>renderHomeRanking(b.dataset.mode)));
   document.querySelectorAll(".login-ranking-tab").forEach(b=>b.addEventListener("click",()=>renderLoginRanking(b.dataset.mode)));
+  els.loginRankingRefreshBtn?.addEventListener("click",refreshLoginRanking);
   els.titleBookBtn.addEventListener("click",()=>{renderTitleBook();showScreen("titleBookScreen")});
   els.titleBookBackBtn.addEventListener("click",()=>{updateHome();showScreen("homeScreen")});
   els.modalCancel.addEventListener("click",hideModal);
@@ -1826,7 +1965,7 @@ const TITLES = [
   els.decisionCard.addEventListener("keydown",e=>{if(e.key==="ArrowLeft")commitChoice("left");if(e.key==="ArrowRight")commitChoice("right")});
 
   window.addEventListener("error",e=>console.error("App error:",e.error||e.message));
-  renderLoginRanking("best");
+  renderLoginRanking("best",{force:true});
 })();
 
 </script>
