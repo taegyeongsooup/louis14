@@ -465,6 +465,10 @@ button:focus-visible,input:focus-visible{outline:2px solid rgba(222,196,127,.78)
 .login-loading-dots i{display:block;width:6px;height:6px;border-radius:50%;background:#c9ac68;animation:resultLoadingDot 1s ease-in-out infinite}
 .login-loading-dots i:nth-child(2){animation-delay:.16s}.login-loading-dots i:nth-child(3){animation-delay:.32s}
 
+
+/* v0.22: clearer continue choice + revolution audio support */
+.choice-overlay strong.choice-continue{color:#f2cf69;text-shadow:0 0 12px rgba(242,207,105,.16)}
+
 </style>
 </head>
 <body>
@@ -473,7 +477,7 @@ button:focus-visible,input:focus-visible{outline:2px solid rgba(222,196,127,.78)
       <button id="audioSettingsBtn" class="audio-fab" type="button" aria-label="소리 설정" title="소리 설정">♪</button>
       <div id="audioPanel" class="audio-panel hidden" role="dialog" aria-label="소리 설정">
         <div class="audio-panel-head"><strong>소리 설정</strong><button id="audioPanelClose" class="audio-close" type="button" aria-label="닫기">×</button></div>
-        <div class="audio-row"><label for="bgmVolume">배경음</label><input id="bgmVolume" class="audio-slider" type="range" min="0" max="100" step="1" value="18"><span id="bgmVolumeValue" class="audio-value">18%</span></div>
+        <div class="audio-row"><label for="bgmVolume">배경음</label><input id="bgmVolume" class="audio-slider" type="range" min="0" max="100" step="1" value="10"><span id="bgmVolumeValue" class="audio-value">10%</span></div>
         <div class="audio-row"><label for="sfxVolume">효과음</label><input id="sfxVolume" class="audio-slider" type="range" min="0" max="100" step="1" value="62"><span id="sfxVolumeValue" class="audio-value">62%</span></div>
         <p class="audio-note">배경음과 효과음은 따로 조절됩니다. 0%로 내리면 해당 소리만 꺼집니다.</p>
       </div>
@@ -871,7 +875,7 @@ const AUDIENCE_CARDS = [
 
   {id:67,type:"audience",turn:15,speaker:"루부아",role:"군사 행정",image:"assets/characters/louvois.png",ignore:{effects:{military:-4}},title:"여기서 물러서면 희생이 헛됩니다",text:"이미 왕국은 막대한 돈을 군대에 투자했습니다. 전쟁을 계속해 성과를 얻을지, 상비군은 유지하되 전쟁을 줄일지 결정해야 합니다.",left:{label:"상비군은 유지하되 전쟁을 피한다",effects:{treasury:-7,military:7,people:3},unrest:-1},right:{label:"전쟁을 계속해 승리를 노린다",effects:{treasury:-12,military:13,elite:5,people:-6},unrest:4,tagsAdd:["공격전쟁"],schedule:[{id:60,delay:2}]}},
   {id:68,type:"audience",turn:15,speaker:"마담 드 맹트농",role:"왕실·사회",image:"assets/characters/maintenon.png",ignore:{effects:{elite:-2,people:-2}},title:"왕의 권위에는 보호도 필요합니다",text:"백성이 왕을 인정하게 하려면 두려움뿐 아니라 왕이 자신들을 보호한다는 느낌도 필요합니다.",left:{label:"궁정과 종교적 질서를 강화한다",effects:{elite:9,people:-4},unrest:2},right:{label:"구휼과 교육에 더 투자한다",effects:{treasury:-8,elite:2,people:10,food:4},unrest:-5}},
-  {id:69,type:"audience",turn:15,speaker:"파리 상인 대표",role:"상공업자 대표(가상)",image:"assets/characters/merchant.png",ignore:{effects:{treasury:-3,people:-2}},title:"사업을 보호해 주십시오",text:"폐하께 재정을 지원할 의향이 있습니다. 대신 우리의 사업과 무역이 안정적으로 이어질 수 있게 보호해 주십시오.",textbook:"재정·군사 국가는 상공업자의 활동을 보호하고 그들로부터 재정 지원을 받았다.",left:{label:"독점권을 주고 큰돈을 받는다",effects:{treasury:15,elite:4,people:-5},unrest:3,tagsAdd:["특권상인"],schedule:[{id:56,delay:3}]},right:{label:"상업을 보호하고 정기 지원을 받는다",effects:{treasury:10,elite:-2,people:6},unrest:-1,tagsAdd:["시민협력"]}},
+  {id:69,type:"audience",turn:15,speaker:"파리 상인 대표",role:"상공업자 대표",image:"assets/characters/merchant.png",ignore:{effects:{treasury:-3,people:-2}},title:"사업을 보호해 주십시오",text:"폐하께 재정을 지원할 의향이 있습니다. 대신 우리의 사업과 무역이 안정적으로 이어질 수 있게 보호해 주십시오.",textbook:"재정·군사 국가는 상공업자의 활동을 보호하고 그들로부터 재정 지원을 받았다.",left:{label:"독점권을 주고 큰돈을 받는다",effects:{treasury:15,elite:4,people:-5},unrest:3,tagsAdd:["특권상인"],schedule:[{id:56,delay:3}]},right:{label:"상업을 보호하고 정기 지원을 받는다",effects:{treasury:10,elite:-2,people:6},unrest:-1,tagsAdd:["시민협력"]}},
 
   {id:70,type:"audience",turn:20,speaker:"니콜라 데마레",role:"재정 담당",image:"assets/characters/desmarets.png",ignore:{effects:{treasury:-4}},title:"더 빌리기만 할 수는 없습니다",text:"더 많은 빚을 다음 세대에 넘길 수 없습니다. 세금 부담을 넓히거나 국가 지출을 줄여야 합니다.",left:{label:"군사비와 궁정비를 함께 줄인다",effects:{treasury:8,military:-5,elite:-4,people:2},unrest:-2},right:{label:"특권층까지 폭넓게 과세한다",effects:{treasury:16,elite:-14,people:5},unrest:-6,tagsAdd:["특권층과세"]}},
   {id:71,type:"audience",turn:20,speaker:"빌라르 원수",role:"군 지휘관",image:"assets/characters/villars.png",ignore:{effects:{military:-4}},title:"군대는 아직 싸울 수 있습니다",text:"군대는 지쳤지만 전투력은 남아 있습니다. 지금 협상할지 마지막 승부를 걸지는 폐하께 달렸습니다.",left:{label:"성과를 바탕으로 평화를 협상한다",effects:{treasury:9,military:-4,elite:-4,people:8,food:5},unrest:-5},right:{label:"마지막 승리를 노린다",effects:{treasury:-13,military:14,elite:6,people:-7,food:-5},unrest:5,tagsAdd:["공격전쟁"]}},
@@ -980,8 +984,9 @@ const TITLES = [
 
   // Audio: MP3 files only. Short SFX are prefetched/decoded with Web Audio for faster response.
   // If Web Audio is unavailable, the existing HTMLAudio pools are used automatically as a fallback.
-  const AUDIO_PREF_KEY = "sunKingAudio_v2";
-  const audioState = { unlocked:false, bgmVolume:.18, sfxVolume:.62 };
+  const AUDIO_PREF_KEY = "sunKingAudio_v3";
+  const LEGACY_AUDIO_PREF_KEY = "sunKingAudio_v2";
+  const audioState = { unlocked:false, bgmVolume:.10, sfxVolume:.62 };
   const bgmAudio = new Audio("assets/audio/bgm.mp3");
   bgmAudio.loop = true;
   bgmAudio.preload = "auto";
@@ -990,6 +995,7 @@ const TITLES = [
     swipe:"assets/audio/card_swipe.mp3",
     confirm:"assets/audio/decision_confirm.mp3",
     audience:"assets/audio/audience_drum.mp3",
+    unrest:"assets/audio/unrest_crowd.mp3",
     victory:"assets/audio/victory_fanfare.mp3",
     reignEnd:"assets/audio/reign_end.mp3"
   };
@@ -998,9 +1004,10 @@ const TITLES = [
   const swipeAudioPool = Array.from({length:3},()=>{ const a=new Audio(SFX_SOURCES.swipe); a.preload="auto"; return a; });
   const confirmAudioPool = Array.from({length:3},()=>{ const a=new Audio(SFX_SOURCES.confirm); a.preload="auto"; return a; });
   const audienceAudioPool = Array.from({length:2},()=>{ const a=new Audio(SFX_SOURCES.audience); a.preload="auto"; return a; });
+  const unrestAudioPool = Array.from({length:2},()=>{ const a=new Audio(SFX_SOURCES.unrest); a.preload="auto"; return a; });
   const victoryAudioPool = Array.from({length:2},()=>{ const a=new Audio(SFX_SOURCES.victory); a.preload="auto"; return a; });
   const reignEndAudioPool = Array.from({length:2},()=>{ const a=new Audio(SFX_SOURCES.reignEnd); a.preload="auto"; return a; });
-  let swipeAudioIndex=0, confirmAudioIndex=0, audienceAudioIndex=0, victoryAudioIndex=0, reignEndAudioIndex=0;
+  let swipeAudioIndex=0, confirmAudioIndex=0, audienceAudioIndex=0, unrestAudioIndex=0, victoryAudioIndex=0, reignEndAudioIndex=0;
 
   const webAudioState = {
     context:null,
@@ -1012,9 +1019,16 @@ const TITLES = [
 
   function loadAudioPrefs(){
     try{
-      const saved=JSON.parse(storageGet(AUDIO_PREF_KEY)||"{}");
-      if(Number.isFinite(saved.bgmVolume)) audioState.bgmVolume=Math.max(0,Math.min(1,saved.bgmVolume));
-      if(Number.isFinite(saved.sfxVolume)) audioState.sfxVolume=Math.max(0,Math.min(1,saved.sfxVolume));
+      const raw=storageGet(AUDIO_PREF_KEY);
+      const saved=raw?JSON.parse(raw):null;
+      if(saved){
+        if(Number.isFinite(saved.bgmVolume)) audioState.bgmVolume=Math.max(0,Math.min(1,saved.bgmVolume));
+        if(Number.isFinite(saved.sfxVolume)) audioState.sfxVolume=Math.max(0,Math.min(1,saved.sfxVolume));
+      } else {
+        // v0.22: 기존 사용자의 효과음 설정은 유지하되 BGM 기본값만 10%로 새로 시작한다.
+        const legacy=JSON.parse(storageGet(LEGACY_AUDIO_PREF_KEY)||"{}");
+        if(Number.isFinite(legacy.sfxVolume)) audioState.sfxVolume=Math.max(0,Math.min(1,legacy.sfxVolume));
+      }
     }catch{}
     applyAudioVolumes();
     syncAudioControls();
@@ -1024,7 +1038,7 @@ const TITLES = [
   }
   function applyAudioVolumes(){
     bgmAudio.volume=audioState.bgmVolume;
-    [...swipeAudioPool,...confirmAudioPool,...audienceAudioPool,...victoryAudioPool,...reignEndAudioPool].forEach(a=>a.volume=audioState.sfxVolume);
+    [...swipeAudioPool,...confirmAudioPool,...audienceAudioPool,...unrestAudioPool,...victoryAudioPool,...reignEndAudioPool].forEach(a=>a.volume=audioState.sfxVolume);
     els.audioSettingsBtn?.classList.toggle("muted",audioState.bgmVolume===0&&audioState.sfxVolume===0);
   }
   function syncAudioControls(){
@@ -1093,7 +1107,7 @@ const TITLES = [
     if(bgmAudio.paused) bgmAudio.play().catch(()=>{});
   }
 
-  function playWebAudio(name){
+  function playWebAudio(name,{volumeScale=1,maxDuration=null}={}){
     if(!audioState.unlocked || audioState.sfxVolume<=0) return false;
     const ctx=ensureAudioContext(), buffer=webAudioState.buffers.get(name);
     if(!ctx || !buffer || ctx.state!=="running") return false;
@@ -1101,39 +1115,73 @@ const TITLES = [
       const source=ctx.createBufferSource();
       const gain=ctx.createGain();
       source.buffer=buffer;
-      gain.gain.value=audioState.sfxVolume;
+      gain.gain.value=Math.max(0,Math.min(1,audioState.sfxVolume*volumeScale));
       source.connect(gain);
       gain.connect(ctx.destination);
       source.start(0);
+      if(Number.isFinite(maxDuration)&&maxDuration>0){
+        try{source.stop(ctx.currentTime+Math.min(maxDuration,buffer.duration));}catch{}
+      }
       return true;
     }catch{return false;}
   }
 
-  function playPooled(pool, indexName){
+  function playPooled(pool,indexName,{volumeScale=1,maxDuration=null}={}){
     if(!audioState.unlocked || audioState.sfxVolume<=0) return;
-    const indexMap={swipe:swipeAudioIndex,confirm:confirmAudioIndex,audience:audienceAudioIndex,victory:victoryAudioIndex,reignEnd:reignEndAudioIndex};
+    const indexMap={swipe:swipeAudioIndex,confirm:confirmAudioIndex,audience:audienceAudioIndex,unrest:unrestAudioIndex,victory:victoryAudioIndex,reignEnd:reignEndAudioIndex};
     const idx=indexMap[indexName]||0;
     const a=pool[idx%pool.length];
-    try{a.pause();a.currentTime=0;a.volume=audioState.sfxVolume;a.play().catch(()=>{});}catch{}
+    try{
+      a.pause();
+      a.currentTime=0;
+      a.volume=Math.max(0,Math.min(1,audioState.sfxVolume*volumeScale));
+      a.play().catch(()=>{});
+      if(Number.isFinite(maxDuration)&&maxDuration>0){
+        setTimeout(()=>{try{a.pause();a.currentTime=0;}catch{}},Math.round(maxDuration*1000));
+      }
+    }catch{}
     const next=(idx+1)%pool.length;
     if(indexName==="swipe") swipeAudioIndex=next;
     else if(indexName==="confirm") confirmAudioIndex=next;
     else if(indexName==="audience") audienceAudioIndex=next;
+    else if(indexName==="unrest") unrestAudioIndex=next;
     else if(indexName==="victory") victoryAudioIndex=next;
     else if(indexName==="reignEnd") reignEndAudioIndex=next;
   }
 
-  function playSfx(name,pool,indexName){
-    if(playWebAudio(name)) return;
-    playPooled(pool,indexName);
+  function playSfx(name,pool,indexName,options={}){
+    if(playWebAudio(name,options)) return;
+    playPooled(pool,indexName,options);
     // If this was the first call before decode completed, keep warming for the next interaction.
     warmSfxWebAudio().catch(()=>{});
   }
   function playSwipeSound(){ playSfx("swipe",swipeAudioPool,"swipe"); }
   function playConfirmSound(){ playSfx("confirm",confirmAudioPool,"confirm"); }
   function playAudienceSound(){ playSfx("audience",audienceAudioPool,"audience"); }
-  function playVictorySound(){ playSfx("victory",victoryAudioPool,"victory"); }
-  function playReignEndSound(){ playSfx("reignEnd",reignEndAudioPool,"reignEnd"); }
+  function playUnrestSound(stage){
+    const scale=({1:.20,2:.38,3:.62,4:.95})[stage]||0;
+    if(scale>0) playSfx("unrest",unrestAudioPool,"unrest",{volumeScale:scale,maxDuration:1.8});
+  }
+
+  let outcomeDuckTimer=null;
+  async function playOutcomeSound(completed){
+    // 결과음이 BGM에 묻히지 않도록 잠시 BGM을 낮추고, Web Audio가 잠들었다면 먼저 깨운다.
+    unlockAudio();
+    const ctx=ensureAudioContext();
+    if(ctx && ctx.state==="suspended") { try{await ctx.resume();}catch{} }
+    if(!webAudioState.buffers.has(completed?"victory":"reignEnd")){
+      try{await Promise.race([warmSfxWebAudio(),new Promise(r=>setTimeout(r,500))]);}catch{}
+    }
+    clearTimeout(outcomeDuckTimer);
+    const original=audioState.bgmVolume;
+    if(original>0) bgmAudio.volume=Math.min(original,.025);
+    if(completed) playSfx("victory",victoryAudioPool,"victory",{volumeScale:1});
+    else playSfx("reignEnd",reignEndAudioPool,"reignEnd",{volumeScale:1});
+    outcomeDuckTimer=setTimeout(()=>{
+      if(!document.hidden) bgmAudio.volume=audioState.bgmVolume;
+    },completed?5200:3200);
+  }
+
 
   const ICONS = {
     // 한눈에 뜻이 들어오도록 단순화한 단색 SVG 아이콘.
@@ -1358,6 +1406,7 @@ const TITLES = [
         turn:1,
         stats:{treasury:48,military:45,elite:50,people:48,food:52},
         unrest:18,
+        lastUnrestStage:0,
         tags:new Set(),
         history:{},
         counts:{war:0,peace:0,mercantilist:0},
@@ -1407,7 +1456,8 @@ const TITLES = [
   }
 
   function setChoiceOverlayLabel(el, text, kicker="선택") {
-    el.innerHTML = `<span class="choice-kicker">${escapeHtml(kicker)}</span><strong>${formatSentenceLines(text, '<br>')}</strong>`;
+    const isContinue = text==="계속하기" || text==="계속 진행";
+    el.innerHTML = `<span class="choice-kicker">${escapeHtml(kicker)}</span><strong class="${isContinue?'choice-continue':''}">${formatSentenceLines(text, '<br>')}</strong>`;
   }
 
   function formatBannerBody(body) {
@@ -1597,6 +1647,7 @@ const TITLES = [
   function commitChoice(side) {
     if (!run || !run.current) return;
     if (run.current.card.auto) {
+      playConfirmSound();
       return animateExit(side,()=>resolveAuto(run.current.card));
     }
     playConfirmSound();
@@ -1829,7 +1880,12 @@ const TITLES = [
 
   function updateUnrestHint() {
     const u=run.unrest;
-    els.unrestHint.textContent = u<30?"왕국은 안정되어 있습니다.":u<50?"곳곳에서 불평이 들려옵니다.":u<70?"⚠ 파리와 지방에서 소요가 늘고 있습니다.":u<90?"⚠ 왕의 권위에 도전하는 목소리가 커집니다.":"🔥 왕국이 폭발 직전입니다.";
+    const stage=u<30?0:u<50?1:u<70?2:u<90?3:4;
+    els.unrestHint.textContent = stage===0?"왕국은 안정되어 있습니다.":stage===1?"곳곳에서 불평이 들려옵니다.":stage===2?"⚠ 파리와 지방에서 소요가 늘고 있습니다.":stage===3?"⚠ 왕의 권위에 도전하는 목소리가 커집니다.":"🔥 왕국이 폭발 직전입니다.";
+    // 같은 함성 음원을 단계가 높아질수록 더 크게 재생한다. 같은 단계에서 반복 재생하지 않는다.
+    const previous=Number.isInteger(run.lastUnrestStage)?run.lastUnrestStage:stage;
+    if(stage>previous && stage>0) playUnrestSound(stage);
+    run.lastUnrestStage=stage;
   }
 
   function resetCardTransform() {
@@ -1862,10 +1918,10 @@ const TITLES = [
       if (Math.abs(x) < 8) {
         els.leftChoiceOverlay.style.opacity=0; els.rightChoiceOverlay.style.opacity=0;
       } else if (x < 0) {
-        setChoiceOverlayLabel(els.rightChoiceOverlay, '계속 진행', '다음으로');
+        setChoiceOverlayLabel(els.rightChoiceOverlay, '계속하기', '다음으로');
         els.leftChoiceOverlay.style.opacity=0; els.rightChoiceOverlay.style.opacity=a;
       } else {
-        setChoiceOverlayLabel(els.leftChoiceOverlay, '계속 진행', '다음으로');
+        setChoiceOverlayLabel(els.leftChoiceOverlay, '계속하기', '다음으로');
         els.rightChoiceOverlay.style.opacity=0; els.leftChoiceOverlay.style.opacity=a;
       }
       clearPreview();
@@ -1955,7 +2011,7 @@ const TITLES = [
     run.ended=true; run.completed=completed;
     run.endCause=cause;
     showResultLoading(completed);
-    if(completed) playVictorySound(); else playReignEndSound();
+    playOutcomeSound(completed).catch(()=>{});
     const turnReached=Math.min(20,run.turn);
     const score=scoreRun(turnReached), grade=gradeFor(score), sim=similarityInfo(), style=classifyStyle();
 
