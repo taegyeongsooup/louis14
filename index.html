@@ -997,7 +997,8 @@ const TITLES = [
     audience:"assets/audio/audience_drum.mp3",
     unrest:"assets/audio/unrest_crowd.mp3",
     victory:"assets/audio/victory_fanfare.mp3",
-    reignEnd:"assets/audio/reign_end.mp3"
+    reignEnd:"assets/audio/reign_end.mp3",
+    turnStart:"assets/audio/turn_start.mp3"
   };
 
   // Fallback pools remain in place for iOS/WebView variants where Web Audio decoding fails.
@@ -1007,7 +1008,8 @@ const TITLES = [
   const unrestAudioPool = Array.from({length:2},()=>{ const a=new Audio(SFX_SOURCES.unrest); a.preload="auto"; return a; });
   const victoryAudioPool = Array.from({length:2},()=>{ const a=new Audio(SFX_SOURCES.victory); a.preload="auto"; return a; });
   const reignEndAudioPool = Array.from({length:2},()=>{ const a=new Audio(SFX_SOURCES.reignEnd); a.preload="auto"; return a; });
-  let swipeAudioIndex=0, confirmAudioIndex=0, audienceAudioIndex=0, unrestAudioIndex=0, victoryAudioIndex=0, reignEndAudioIndex=0;
+  const turnStartAudioPool = Array.from({length:2},()=>{ const a=new Audio(SFX_SOURCES.turnStart); a.preload="auto"; return a; });
+  let swipeAudioIndex=0, confirmAudioIndex=0, audienceAudioIndex=0, unrestAudioIndex=0, victoryAudioIndex=0, reignEndAudioIndex=0, turnStartAudioIndex=0;
 
   const webAudioState = {
     context:null,
@@ -1038,7 +1040,7 @@ const TITLES = [
   }
   function applyAudioVolumes(){
     bgmAudio.volume=audioState.bgmVolume;
-    [...swipeAudioPool,...confirmAudioPool,...audienceAudioPool,...unrestAudioPool,...victoryAudioPool,...reignEndAudioPool].forEach(a=>a.volume=audioState.sfxVolume);
+    [...swipeAudioPool,...confirmAudioPool,...audienceAudioPool,...unrestAudioPool,...victoryAudioPool,...reignEndAudioPool,...turnStartAudioPool].forEach(a=>a.volume=audioState.sfxVolume);
     els.audioSettingsBtn?.classList.toggle("muted",audioState.bgmVolume===0&&audioState.sfxVolume===0);
   }
   function syncAudioControls(){
@@ -1128,7 +1130,7 @@ const TITLES = [
 
   function playPooled(pool,indexName,{volumeScale=1,maxDuration=null}={}){
     if(!audioState.unlocked || audioState.sfxVolume<=0) return;
-    const indexMap={swipe:swipeAudioIndex,confirm:confirmAudioIndex,audience:audienceAudioIndex,unrest:unrestAudioIndex,victory:victoryAudioIndex,reignEnd:reignEndAudioIndex};
+    const indexMap={swipe:swipeAudioIndex,confirm:confirmAudioIndex,audience:audienceAudioIndex,unrest:unrestAudioIndex,victory:victoryAudioIndex,reignEnd:reignEndAudioIndex,turnStart:turnStartAudioIndex};
     const idx=indexMap[indexName]||0;
     const a=pool[idx%pool.length];
     try{
@@ -1147,6 +1149,7 @@ const TITLES = [
     else if(indexName==="unrest") unrestAudioIndex=next;
     else if(indexName==="victory") victoryAudioIndex=next;
     else if(indexName==="reignEnd") reignEndAudioIndex=next;
+    else if(indexName==="turnStart") turnStartAudioIndex=next;
   }
 
   function playSfx(name,pool,indexName,options={}){
@@ -1158,6 +1161,7 @@ const TITLES = [
   function playSwipeSound(){ playSfx("swipe",swipeAudioPool,"swipe"); }
   function playConfirmSound(){ playSfx("confirm",confirmAudioPool,"confirm"); }
   function playAudienceSound(){ playSfx("audience",audienceAudioPool,"audience"); }
+  function playTurnStartSound(){ playSfx("turnStart",turnStartAudioPool,"turnStart",{volumeScale:.90,maxDuration:2.2}); }
   function playUnrestSound(stage){
     const scale=({1:.20,2:.38,3:.62,4:.95})[stage]||0;
     if(scale>0) playSfx("unrest",unrestAudioPool,"unrest",{volumeScale:scale,maxDuration:1.8});
@@ -1429,6 +1433,8 @@ const TITLES = [
       showScreen("gameScreen");
       updateStatBar(true);
       beginTurn();
+      // 새 통치 시작 도장음과 겹치지 않게 첫 카드가 자리 잡은 뒤 짧게 쿵 소리를 낸다.
+      setTimeout(()=>{ if(run && !run.ended && run.turn===1) playTurnStartSound(); },260);
     } catch (err) {
       console.error("Game start failed", err);
       showNoticeModal({kicker:"실행 오류",title:"게임을 시작하지 못했습니다",text:`${err?.message || err}\n\n전체 압축파일을 푼 뒤 index.html을 다시 실행해 주세요.`});
@@ -2238,6 +2244,7 @@ const TITLES = [
     if(!/^\d{4}$/.test(pin)) return els.loginMessage.textContent="PIN은 숫자 4자리입니다.";
 
     unlockAudio();
+    playConfirmSound();
     showLoginLoading();
     const minimumVeil=wait(450);
     // SFX decoding runs in parallel with login; do not block indefinitely if a sound file is missing.
@@ -2256,7 +2263,7 @@ const TITLES = [
     }
   });
   els.logoutBtn.addEventListener("click",returnToLogin);
-  els.startBtn.addEventListener("click",newRun); els.playAgainBtn.addEventListener("click",()=>{updateHome();showScreen("homeScreen")});
+  els.startBtn.addEventListener("click",()=>{unlockAudio();playConfirmSound();newRun();}); els.playAgainBtn.addEventListener("click",()=>{updateHome();showScreen("homeScreen")});
   els.homeBtn.addEventListener("click",returnToLogin);
   els.quitRunBtn.addEventListener("click",()=>{
     if(!run||run.ended) return;
@@ -2275,7 +2282,7 @@ const TITLES = [
   document.querySelectorAll(".home-ranking-tab").forEach(b=>b.addEventListener("click",()=>renderHomeRanking(b.dataset.mode)));
   document.querySelectorAll(".login-ranking-tab").forEach(b=>b.addEventListener("click",()=>renderLoginRanking(b.dataset.mode)));
   els.loginRankingRefreshBtn?.addEventListener("click",refreshLoginRanking);
-  els.titleBookBtn.addEventListener("click",()=>{renderTitleBook();showScreen("titleBookScreen")});
+  els.titleBookBtn.addEventListener("click",()=>{unlockAudio();playConfirmSound();renderTitleBook();showScreen("titleBookScreen")});
   els.titleBookBackBtn.addEventListener("click",()=>{updateHome();showScreen("homeScreen")});
   els.modalCancel.addEventListener("click",hideModal);
   els.modalConfirm.addEventListener("click",()=>{const fn=modalConfirmHandler;hideModal();if(fn)fn();});
