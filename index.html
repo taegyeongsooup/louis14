@@ -429,11 +429,43 @@ button:focus-visible,input:focus-visible{outline:2px solid rgba(222,196,127,.78)
 .ranking-refresh-btn.refreshing{animation:rankingPulse .8s ease-in-out infinite alternate}
 @keyframes rankingPulse{from{opacity:.48}to{opacity:1}}
 
+
+
+/* v0.19: compact audio controls */
+.audio-fab{position:absolute;z-index:80;top:10px;right:82px;width:34px;height:34px;border:1px solid rgba(214,189,122,.24);border-radius:50%;background:rgba(20,14,10,.78);color:#d8c18a;display:grid;place-items:center;font-size:1rem;line-height:1;cursor:pointer;backdrop-filter:blur(8px);box-shadow:0 7px 18px rgba(0,0,0,.22);opacity:.82;transition:opacity .15s,border-color .15s,background .15s}
+.audio-fab:hover,.audio-fab:focus-visible{opacity:1;border-color:rgba(222,196,127,.52);background:rgba(34,23,15,.92)}
+.audio-fab.muted{color:#81745d}
+.audio-panel{position:absolute;z-index:90;top:51px;right:10px;width:min(238px,calc(100% - 20px));padding:13px 14px 14px;border:1px solid rgba(214,189,122,.28);border-radius:16px;background:rgba(18,12,8,.97);box-shadow:0 18px 46px rgba(0,0,0,.48);backdrop-filter:blur(12px)}
+.audio-panel-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:11px}.audio-panel-head strong{font-size:.82rem;color:#eadbb8}.audio-close{width:28px;height:28px;border:0;background:transparent;color:#8e8065;font-size:1.1rem;cursor:pointer}
+.audio-row{display:grid;grid-template-columns:58px minmax(0,1fr) 34px;align-items:center;gap:8px;margin-top:10px}.audio-row label{font-size:.70rem;font-weight:900;color:#b9a77f}.audio-value{text-align:right;font-size:.64rem;color:#8e8065;font-variant-numeric:tabular-nums}.audio-slider{width:100%;accent-color:#c6a85f;cursor:pointer}.audio-note{margin:11px 1px 0;font-size:.59rem;line-height:1.45;color:#74674f;word-break:keep-all}
+@media(max-width:430px){.audio-fab{right:76px}}
+
+
+
+/* v0.20: audience/result sounds + result loading veil */
+.result-loading-veil{position:absolute;inset:0;z-index:950;display:grid;place-items:center;padding:28px;background:rgba(5,3,2,.84);backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px);text-align:center;opacity:1;transition:opacity .22s ease}
+.result-loading-veil.hidden{display:none!important}
+.result-loading-inner{width:min(330px,90%);padding:25px 18px;border-top:1px solid rgba(214,189,122,.17);border-bottom:1px solid rgba(214,189,122,.17)}
+.result-loading-kicker{margin:0 0 8px;color:#9f8d68;font-size:.72rem;font-weight:900;letter-spacing:.16em}
+.result-loading-title{margin:0;color:#f1e5ca;font-size:1.38rem;line-height:1.45;font-weight:900;word-break:keep-all}
+.result-loading-note{margin:11px 0 0;color:#998a6c;font-size:.75rem;line-height:1.5}
+.result-loading-dots{display:flex;justify-content:center;gap:7px;margin-top:18px}
+.result-loading-dots i{display:block;width:6px;height:6px;border-radius:50%;background:#c9ac68;animation:resultLoadingDot 1s ease-in-out infinite}
+.result-loading-dots i:nth-child(2){animation-delay:.16s}.result-loading-dots i:nth-child(3){animation-delay:.32s}
+@keyframes resultLoadingDot{0%,100%{opacity:.25;transform:translateY(0)}50%{opacity:1;transform:translateY(-4px)}}
+
 </style>
 </head>
 <body>
   <div class="desktop-shell">
     <main id="app" class="app-shell" aria-live="polite">
+      <button id="audioSettingsBtn" class="audio-fab" type="button" aria-label="소리 설정" title="소리 설정">♪</button>
+      <div id="audioPanel" class="audio-panel hidden" role="dialog" aria-label="소리 설정">
+        <div class="audio-panel-head"><strong>소리 설정</strong><button id="audioPanelClose" class="audio-close" type="button" aria-label="닫기">×</button></div>
+        <div class="audio-row"><label for="bgmVolume">배경음</label><input id="bgmVolume" class="audio-slider" type="range" min="0" max="100" step="1" value="28"><span id="bgmVolumeValue" class="audio-value">28%</span></div>
+        <div class="audio-row"><label for="sfxVolume">효과음</label><input id="sfxVolume" class="audio-slider" type="range" min="0" max="100" step="1" value="62"><span id="sfxVolumeValue" class="audio-value">62%</span></div>
+        <p class="audio-note">배경음과 효과음은 따로 조절됩니다. 0%로 내리면 해당 소리만 꺼집니다.</p>
+      </div>
       <section id="loginScreen" class="screen screen-active login-screen">
         <header class="login-masthead">
           <img class="title-art" src="assets/ui/game_title.png" alt="짐이 곧 국가다" />
@@ -604,6 +636,14 @@ button:focus-visible,input:focus-visible{outline:2px solid rgba(222,196,127,.78)
         <div id="titleBookList" class="titlebook-list"></div>
       </section>
     </main>
+    <div id="resultLoadingVeil" class="result-loading-veil hidden" aria-live="polite" aria-busy="true">
+      <div class="result-loading-inner">
+        <p class="result-loading-kicker">통치 기록 정리 중</p>
+        <h2 class="result-loading-title">당신의 통치는 여기까지 입니다.</h2>
+        <p class="result-loading-note">결과와 랭킹을 정리하고 있습니다.</p>
+        <div class="result-loading-dots" aria-hidden="true"><i></i><i></i><i></i></div>
+      </div>
+    </div>
   </div>
 
   <div id="modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
@@ -632,52 +672,6 @@ window.APP_CONFIG = {
   총 카드 데이터 72장 = 일반 45 + 조건부 후속 15 + 특별 알현 12
   수치는 학생 화면에 직접 공개되지 않으며, 선택 전에는 영향받는 지표와 대략적 크기만 예고됩니다.
 */
-
-const AUDIO_CONFIG = {
-  bgmSrc: "assets/audio/bgm.mp3",
-  swipeSrc: "assets/audio/card_swipe.mp3",
-  bgmVolume: 0.28,
-  swipeVolume: 0.62
-};
-
-const bgmAudio = new Audio(AUDIO_CONFIG.bgmSrc);
-bgmAudio.loop = true;
-bgmAudio.preload = "auto";
-bgmAudio.volume = AUDIO_CONFIG.bgmVolume;
-
-const swipeAudioBase = new Audio(AUDIO_CONFIG.swipeSrc);
-swipeAudioBase.preload = "auto";
-swipeAudioBase.volume = AUDIO_CONFIG.swipeVolume;
-
-let audioUnlocked = false;
-let bgmWanted = true;
-
-function startBgmFromGesture() {
-  audioUnlocked = true;
-  if (!bgmWanted || document.hidden) return;
-  bgmAudio.play().catch(()=>{});
-}
-
-function playCardSwipeSound() {
-  if (!audioUnlocked) return;
-  try {
-    const sound = swipeAudioBase.cloneNode(true);
-    sound.volume = AUDIO_CONFIG.swipeVolume;
-    sound.currentTime = 0;
-    const promise = sound.play();
-    if (promise?.catch) promise.catch(()=>{});
-  } catch {}
-}
-
-// 모바일 브라우저 자동재생 제한 대응: 첫 사용자 조작에서 BGM을 시작한다.
-document.addEventListener("pointerdown", startBgmFromGesture, {passive:true});
-document.addEventListener("keydown", startBgmFromGesture);
-
-// 다른 탭/앱으로 이동하면 음악을 멈추고, 돌아오면 다시 이어서 재생한다.
-document.addEventListener("visibilitychange", ()=>{
-  if (document.hidden) bgmAudio.pause();
-  else if (audioUnlocked && bgmWanted) bgmAudio.play().catch(()=>{});
-});
 
 const STAT_KEYS = ["treasury", "military", "elite", "people", "food"];
 
@@ -945,13 +939,14 @@ const TITLES = [
     "audienceTurnLabel","audienceStatBar","audienceGrid","resultYear","resultHeadline","resultCause","resultScore","resultGrade","resultScoreNote","resultMainTitle",
     "resultSummary","resultStats","resultBestRank","resultTotalRank","titleCountLabel","earnedTitles","similarityPercent","similarityCoverage",
     "historyComparison","playAgainBtn","homeBtn","titleBookBackBtn","titleBookList",
-    "modal","modalKicker","modalTitle","modalText","modalActions","modalCancel","modalConfirm"
+    "modal","modalKicker","modalTitle","modalText","modalActions","modalCancel","modalConfirm",
+    "audioSettingsBtn","audioPanel","audioPanelClose","bgmVolume","sfxVolume","bgmVolumeValue","sfxVolumeValue","resultLoadingVeil"
   ].map(k => [k, $(k)]));
 
   let currentUser = null;
   let currentProfile = null;
   let run = null;
-  let drag = {active:false,startX:0,x:0};
+  let drag = {active:false,startX:0,x:0,soundDirection:null};
   let rankingMode = "best";
   let loginRankingMode = "best";
 
@@ -963,6 +958,72 @@ const TITLES = [
   function storageRemove(key) { try { localStorage.removeItem(key); } catch { delete memoryStore[key]; } }
   function sessionSet(key,value) { try { sessionStorage.setItem(key,value); } catch { memorySession[key]=String(value); } }
   function sessionRemove(key) { try { sessionStorage.removeItem(key); } catch { delete memorySession[key]; } }
+
+  // Audio: place files in assets/audio/. Missing files fail silently so the game still works.
+  const AUDIO_PREF_KEY = "sunKingAudio_v1";
+  const audioState = { unlocked:false, bgmVolume:.28, sfxVolume:.62 };
+  const bgmAudio = new Audio("assets/audio/bgm.mp3");
+  bgmAudio.loop = true;
+  bgmAudio.preload = "auto";
+  const swipeAudioPool = Array.from({length:3},()=>{ const a=new Audio("assets/audio/card_swipe.mp3"); a.preload="auto"; return a; });
+  const confirmAudioPool = Array.from({length:3},()=>{ const a=new Audio("assets/audio/decision_confirm.mp3"); a.preload="auto"; return a; });
+  const audienceAudioPool = Array.from({length:2},()=>{ const a=new Audio("assets/audio/audience_drum.mp3"); a.preload="auto"; return a; });
+  const victoryAudioPool = Array.from({length:2},()=>{ const a=new Audio("assets/audio/victory_fanfare.mp3"); a.preload="auto"; return a; });
+  const reignEndAudioPool = Array.from({length:2},()=>{ const a=new Audio("assets/audio/reign_end.mp3"); a.preload="auto"; return a; });
+  let swipeAudioIndex=0, confirmAudioIndex=0, audienceAudioIndex=0, victoryAudioIndex=0, reignEndAudioIndex=0;
+
+  function loadAudioPrefs(){
+    try{
+      const saved=JSON.parse(storageGet(AUDIO_PREF_KEY)||"{}");
+      if(Number.isFinite(saved.bgmVolume)) audioState.bgmVolume=Math.max(0,Math.min(1,saved.bgmVolume));
+      if(Number.isFinite(saved.sfxVolume)) audioState.sfxVolume=Math.max(0,Math.min(1,saved.sfxVolume));
+    }catch{}
+    applyAudioVolumes();
+    syncAudioControls();
+  }
+  function saveAudioPrefs(){
+    storageSet(AUDIO_PREF_KEY,JSON.stringify({bgmVolume:audioState.bgmVolume,sfxVolume:audioState.sfxVolume}));
+  }
+  function applyAudioVolumes(){
+    bgmAudio.volume=audioState.bgmVolume;
+    [...swipeAudioPool,...confirmAudioPool,...audienceAudioPool,...victoryAudioPool,...reignEndAudioPool].forEach(a=>a.volume=audioState.sfxVolume);
+    els.audioSettingsBtn?.classList.toggle("muted",audioState.bgmVolume===0&&audioState.sfxVolume===0);
+  }
+  function syncAudioControls(){
+    if(!els.bgmVolume) return;
+    const b=Math.round(audioState.bgmVolume*100), f=Math.round(audioState.sfxVolume*100);
+    els.bgmVolume.value=String(b); els.sfxVolume.value=String(f);
+    els.bgmVolumeValue.textContent=`${b}%`; els.sfxVolumeValue.textContent=`${f}%`;
+  }
+  function unlockAudio(){
+    if(audioState.unlocked) return;
+    audioState.unlocked=true;
+    if(audioState.bgmVolume>0 && !document.hidden){
+      bgmAudio.play().catch(()=>{});
+    }
+  }
+  function ensureBgm(){
+    if(!audioState.unlocked || document.hidden || audioState.bgmVolume<=0) return;
+    if(bgmAudio.paused) bgmAudio.play().catch(()=>{});
+  }
+  function playPooled(pool, indexName){
+    if(!audioState.unlocked || audioState.sfxVolume<=0) return;
+    const indexMap={swipe:swipeAudioIndex,confirm:confirmAudioIndex,audience:audienceAudioIndex,victory:victoryAudioIndex,reignEnd:reignEndAudioIndex};
+    const idx=indexMap[indexName]||0;
+    const a=pool[idx%pool.length];
+    try{a.pause();a.currentTime=0;a.volume=audioState.sfxVolume;a.play().catch(()=>{});}catch{}
+    const next=(idx+1)%pool.length;
+    if(indexName==="swipe") swipeAudioIndex=next;
+    else if(indexName==="confirm") confirmAudioIndex=next;
+    else if(indexName==="audience") audienceAudioIndex=next;
+    else if(indexName==="victory") victoryAudioIndex=next;
+    else if(indexName==="reignEnd") reignEndAudioIndex=next;
+  }
+  function playSwipeSound(){ playPooled(swipeAudioPool,"swipe"); }
+  function playConfirmSound(){ playPooled(confirmAudioPool,"confirm"); }
+  function playAudienceSound(){ playPooled(audienceAudioPool,"audience"); }
+  function playVictorySound(){ playPooled(victoryAudioPool,"victory"); }
+  function playReignEndSound(){ playPooled(reignEndAudioPool,"reignEnd"); }
 
   const ICONS = {
     // 한눈에 뜻이 들어오도록 단순화한 단색 SVG 아이콘.
@@ -1331,6 +1392,7 @@ const TITLES = [
   }
 
   function showAudience() {
+    playAudienceSound();
     const ids=audienceIdsForTurn(run.turn);
     preloadCards(ids.map(id=>CARD_BY_ID[id]).filter(Boolean));
     els.audienceTurnLabel.textContent=`TURN ${run.turn}`;
@@ -1349,6 +1411,7 @@ const TITLES = [
   }
 
   function selectAudience(selectedId) {
+    playConfirmSound();
     const ids=audienceIdsForTurn(run.turn);
     const ignored=[];
     ids.filter(id=>id!==selectedId).forEach(id=>{
@@ -1426,6 +1489,7 @@ const TITLES = [
     if (run.current.card.auto) {
       return animateExit(side,()=>resolveAuto(run.current.card));
     }
+    playConfirmSound();
     if (run.current.kind === "crisis") return commitCrisisChoice(side);
     const currentKind=run.current.kind;
     const card=run.current.card, choice=card[side];
@@ -1659,12 +1723,11 @@ const TITLES = [
   }
 
   function resetCardTransform() {
-    drag={active:false,startX:0,x:0};
+    drag={active:false,startX:0,x:0,soundDirection:null};
     els.decisionCard.style.transition="none"; els.decisionCard.style.transform="translateX(0) rotate(0)"; els.decisionCard.style.opacity="1";
     els.leftChoiceOverlay.style.opacity=0; els.rightChoiceOverlay.style.opacity=0; clearPreview();
   }
   function animateExit(side, cb) {
-    playCardSwipeSound();
     const dir=side==="right"?1:-1;
     els.decisionCard.style.transition="transform .28s ease, opacity .25s";
     els.decisionCard.style.transform=`translateX(${dir*145}%) rotate(${dir*10}deg)`; els.decisionCard.style.opacity="0";
@@ -1673,7 +1736,7 @@ const TITLES = [
 
   function pointerDown(e) {
     if(!run?.current) return;
-    drag.active=true;drag.startX=e.clientX;drag.x=0;els.decisionCard.setPointerCapture?.(e.pointerId);
+    drag.active=true;drag.startX=e.clientX;drag.x=0;drag.soundDirection=null;unlockAudio();els.decisionCard.setPointerCapture?.(e.pointerId);
   }
   function pointerMove(e) {
     if(!drag.active) return;
@@ -1681,6 +1744,10 @@ const TITLES = [
     const max=170, x=Math.max(-max,Math.min(max,drag.x));
     els.decisionCard.style.transition="none";els.decisionCard.style.transform=`translateX(${x}px) rotate(${x/24}deg)`;
     const a=Math.min(1,Math.abs(x)/92);
+    if(Math.abs(x)>=14){
+      const direction=x<0?"left":"right";
+      if(drag.soundDirection!==direction){ drag.soundDirection=direction; playSwipeSound(); }
+    } else if(Math.abs(x)<6) drag.soundDirection=null;
     if (run.current?.card?.auto) {
       if (Math.abs(x) < 8) {
         els.leftChoiceOverlay.style.opacity=0; els.rightChoiceOverlay.style.opacity=0;
@@ -1759,10 +1826,26 @@ const TITLES = [
     return (profile.titles||[]).map(id=>TITLES.find(t=>t.id===id)).filter(Boolean).sort((a,b)=>b.tier-a.tier||b.weight-a.weight).slice(0,3).map(t=>t.id);
   }
 
+  function showResultLoading(completed=false){
+    if(!els.resultLoadingVeil) return;
+    const title=els.resultLoadingVeil.querySelector(".result-loading-title");
+    const kicker=els.resultLoadingVeil.querySelector(".result-loading-kicker");
+    const note=els.resultLoadingVeil.querySelector(".result-loading-note");
+    if(kicker) kicker.textContent=completed?"통치 완료":"통치 종료";
+    if(title) title.textContent=completed?"태양왕의 시대가 저뭅니다.":"당신의 통치는 여기까지 입니다.";
+    if(note) note.textContent="결과와 랭킹을 정리하고 있습니다.";
+    els.resultLoadingVeil.classList.remove("hidden");
+    clearTimeout(showResultLoading._fallback);
+    showResultLoading._fallback=setTimeout(()=>hideResultLoading(),8000);
+  }
+  function hideResultLoading(){ clearTimeout(showResultLoading._fallback); els.resultLoadingVeil?.classList.add("hidden"); }
+
   async function finishRun(completed=false,cause=null) {
     if(!run || run.ended) return;
     run.ended=true; run.completed=completed;
     run.endCause=cause;
+    showResultLoading(completed);
+    if(completed) playVictorySound(); else playReignEndSound();
     const turnReached=Math.min(20,run.turn);
     const score=scoreRun(turnReached), grade=gradeFor(score), sim=similarityInfo(), style=classifyStyle();
 
@@ -1823,6 +1906,7 @@ const TITLES = [
     const ranks=await preloadRankingsForLogin(true);
     els.resultBestRank.textContent=formatRank(findRank(ranks.best,currentProfile.studentNo,currentProfile.name));
     els.resultTotalRank.textContent=formatRank(findRank(ranks.total,currentProfile.studentNo,currentProfile.name));
+    hideResultLoading();
   }
 
   function roman(n){return ["","Ⅰ","Ⅱ","Ⅲ","Ⅳ","Ⅴ"][n]||""}
@@ -2011,7 +2095,17 @@ const TITLES = [
   els.decisionCard.addEventListener("pointerdown",pointerDown); els.decisionCard.addEventListener("pointermove",pointerMove); els.decisionCard.addEventListener("pointerup",pointerUp); els.decisionCard.addEventListener("pointercancel",pointerUp);
   els.decisionCard.addEventListener("keydown",e=>{if(e.key==="ArrowLeft")commitChoice("left");if(e.key==="ArrowRight")commitChoice("right")});
 
+  els.audioSettingsBtn?.addEventListener("click",e=>{e.stopPropagation();unlockAudio();els.audioPanel?.classList.toggle("hidden")});
+  els.audioPanelClose?.addEventListener("click",()=>els.audioPanel?.classList.add("hidden"));
+  els.audioPanel?.addEventListener("click",e=>e.stopPropagation());
+  document.addEventListener("click",()=>els.audioPanel?.classList.add("hidden"));
+  els.bgmVolume?.addEventListener("input",()=>{audioState.bgmVolume=Number(els.bgmVolume.value)/100;applyAudioVolumes();syncAudioControls();saveAudioPrefs();if(audioState.bgmVolume>0){unlockAudio();ensureBgm();}else bgmAudio.pause();});
+  els.sfxVolume?.addEventListener("input",()=>{audioState.sfxVolume=Number(els.sfxVolume.value)/100;applyAudioVolumes();syncAudioControls();saveAudioPrefs();unlockAudio();});
+  document.addEventListener("pointerdown",unlockAudio,{once:true,capture:true});
+  document.addEventListener("visibilitychange",()=>{if(document.hidden) bgmAudio.pause(); else ensureBgm();});
+
   window.addEventListener("error",e=>console.error("App error:",e.error||e.message));
+  loadAudioPrefs();
   renderLoginRanking("best",{force:true});
 })();
 
