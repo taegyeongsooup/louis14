@@ -454,6 +454,17 @@ button:focus-visible,input:focus-visible{outline:2px solid rgba(222,196,127,.78)
 .result-loading-dots i:nth-child(2){animation-delay:.16s}.result-loading-dots i:nth-child(3){animation-delay:.32s}
 @keyframes resultLoadingDot{0%,100%{opacity:.25;transform:translateY(0)}50%{opacity:1;transform:translateY(-4px)}}
 
+/* v0.21: login loading veil + MP3 Web Audio warmup */
+.login-loading-veil{position:fixed;inset:0;z-index:980;display:grid;place-items:center;padding:28px;background:rgba(5,3,2,.88);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);text-align:center}
+.login-loading-veil.hidden{display:none!important}
+.login-loading-inner{width:min(330px,90%);padding:25px 18px;border-top:1px solid rgba(214,189,122,.19);border-bottom:1px solid rgba(214,189,122,.19)}
+.login-loading-kicker{margin:0 0 8px;color:#a9956d;font-size:.72rem;font-weight:900;letter-spacing:.16em}
+.login-loading-title{margin:0;color:#f3e7cc;font-size:1.38rem;line-height:1.45;font-weight:900;word-break:keep-all}
+.login-loading-note{margin:11px 0 0;color:#9e8f70;font-size:.75rem;line-height:1.5;word-break:keep-all}
+.login-loading-dots{display:flex;justify-content:center;gap:7px;margin-top:18px}
+.login-loading-dots i{display:block;width:6px;height:6px;border-radius:50%;background:#c9ac68;animation:resultLoadingDot 1s ease-in-out infinite}
+.login-loading-dots i:nth-child(2){animation-delay:.16s}.login-loading-dots i:nth-child(3){animation-delay:.32s}
+
 </style>
 </head>
 <body>
@@ -462,7 +473,7 @@ button:focus-visible,input:focus-visible{outline:2px solid rgba(222,196,127,.78)
       <button id="audioSettingsBtn" class="audio-fab" type="button" aria-label="소리 설정" title="소리 설정">♪</button>
       <div id="audioPanel" class="audio-panel hidden" role="dialog" aria-label="소리 설정">
         <div class="audio-panel-head"><strong>소리 설정</strong><button id="audioPanelClose" class="audio-close" type="button" aria-label="닫기">×</button></div>
-        <div class="audio-row"><label for="bgmVolume">배경음</label><input id="bgmVolume" class="audio-slider" type="range" min="0" max="100" step="1" value="28"><span id="bgmVolumeValue" class="audio-value">28%</span></div>
+        <div class="audio-row"><label for="bgmVolume">배경음</label><input id="bgmVolume" class="audio-slider" type="range" min="0" max="100" step="1" value="18"><span id="bgmVolumeValue" class="audio-value">18%</span></div>
         <div class="audio-row"><label for="sfxVolume">효과음</label><input id="sfxVolume" class="audio-slider" type="range" min="0" max="100" step="1" value="62"><span id="sfxVolumeValue" class="audio-value">62%</span></div>
         <p class="audio-note">배경음과 효과음은 따로 조절됩니다. 0%로 내리면 해당 소리만 꺼집니다.</p>
       </div>
@@ -636,6 +647,14 @@ button:focus-visible,input:focus-visible{outline:2px solid rgba(222,196,127,.78)
         <div id="titleBookList" class="titlebook-list"></div>
       </section>
     </main>
+    <div id="loginLoadingVeil" class="login-loading-veil hidden" aria-live="polite" aria-busy="true">
+      <div class="login-loading-inner">
+        <p class="login-loading-kicker">왕실 출입 확인 중</p>
+        <h2 class="login-loading-title">왕궁으로 들어가는 중입니다.</h2>
+        <p class="login-loading-note">통치자 기록과 왕실 장부를 확인하고 있습니다.</p>
+        <div class="login-loading-dots" aria-hidden="true"><i></i><i></i><i></i></div>
+      </div>
+    </div>
     <div id="resultLoadingVeil" class="result-loading-veil hidden" aria-live="polite" aria-busy="true">
       <div class="result-loading-inner">
         <p class="result-loading-kicker">통치 기록 정리 중</p>
@@ -940,7 +959,7 @@ const TITLES = [
     "resultSummary","resultStats","resultBestRank","resultTotalRank","titleCountLabel","earnedTitles","similarityPercent","similarityCoverage",
     "historyComparison","playAgainBtn","homeBtn","titleBookBackBtn","titleBookList",
     "modal","modalKicker","modalTitle","modalText","modalActions","modalCancel","modalConfirm",
-    "audioSettingsBtn","audioPanel","audioPanelClose","bgmVolume","sfxVolume","bgmVolumeValue","sfxVolumeValue","resultLoadingVeil"
+    "audioSettingsBtn","audioPanel","audioPanelClose","bgmVolume","sfxVolume","bgmVolumeValue","sfxVolumeValue","loginLoadingVeil","resultLoadingVeil"
   ].map(k => [k, $(k)]));
 
   let currentUser = null;
@@ -959,18 +978,37 @@ const TITLES = [
   function sessionSet(key,value) { try { sessionStorage.setItem(key,value); } catch { memorySession[key]=String(value); } }
   function sessionRemove(key) { try { sessionStorage.removeItem(key); } catch { delete memorySession[key]; } }
 
-  // Audio: place files in assets/audio/. Missing files fail silently so the game still works.
-  const AUDIO_PREF_KEY = "sunKingAudio_v1";
-  const audioState = { unlocked:false, bgmVolume:.28, sfxVolume:.62 };
+  // Audio: MP3 files only. Short SFX are prefetched/decoded with Web Audio for faster response.
+  // If Web Audio is unavailable, the existing HTMLAudio pools are used automatically as a fallback.
+  const AUDIO_PREF_KEY = "sunKingAudio_v2";
+  const audioState = { unlocked:false, bgmVolume:.18, sfxVolume:.62 };
   const bgmAudio = new Audio("assets/audio/bgm.mp3");
   bgmAudio.loop = true;
   bgmAudio.preload = "auto";
-  const swipeAudioPool = Array.from({length:3},()=>{ const a=new Audio("assets/audio/card_swipe.mp3"); a.preload="auto"; return a; });
-  const confirmAudioPool = Array.from({length:3},()=>{ const a=new Audio("assets/audio/decision_confirm.mp3"); a.preload="auto"; return a; });
-  const audienceAudioPool = Array.from({length:2},()=>{ const a=new Audio("assets/audio/audience_drum.mp3"); a.preload="auto"; return a; });
-  const victoryAudioPool = Array.from({length:2},()=>{ const a=new Audio("assets/audio/victory_fanfare.mp3"); a.preload="auto"; return a; });
-  const reignEndAudioPool = Array.from({length:2},()=>{ const a=new Audio("assets/audio/reign_end.mp3"); a.preload="auto"; return a; });
+
+  const SFX_SOURCES = {
+    swipe:"assets/audio/card_swipe.mp3",
+    confirm:"assets/audio/decision_confirm.mp3",
+    audience:"assets/audio/audience_drum.mp3",
+    victory:"assets/audio/victory_fanfare.mp3",
+    reignEnd:"assets/audio/reign_end.mp3"
+  };
+
+  // Fallback pools remain in place for iOS/WebView variants where Web Audio decoding fails.
+  const swipeAudioPool = Array.from({length:3},()=>{ const a=new Audio(SFX_SOURCES.swipe); a.preload="auto"; return a; });
+  const confirmAudioPool = Array.from({length:3},()=>{ const a=new Audio(SFX_SOURCES.confirm); a.preload="auto"; return a; });
+  const audienceAudioPool = Array.from({length:2},()=>{ const a=new Audio(SFX_SOURCES.audience); a.preload="auto"; return a; });
+  const victoryAudioPool = Array.from({length:2},()=>{ const a=new Audio(SFX_SOURCES.victory); a.preload="auto"; return a; });
+  const reignEndAudioPool = Array.from({length:2},()=>{ const a=new Audio(SFX_SOURCES.reignEnd); a.preload="auto"; return a; });
   let swipeAudioIndex=0, confirmAudioIndex=0, audienceAudioIndex=0, victoryAudioIndex=0, reignEndAudioIndex=0;
+
+  const webAudioState = {
+    context:null,
+    bytes:new Map(),
+    buffers:new Map(),
+    fetches:new Map(),
+    warmPromise:null
+  };
 
   function loadAudioPrefs(){
     try{
@@ -995,17 +1033,82 @@ const TITLES = [
     els.bgmVolume.value=String(b); els.sfxVolume.value=String(f);
     els.bgmVolumeValue.textContent=`${b}%`; els.sfxVolumeValue.textContent=`${f}%`;
   }
+
+  function ensureAudioContext(){
+    if(webAudioState.context) return webAudioState.context;
+    const AudioContextCtor=window.AudioContext||window.webkitAudioContext;
+    if(!AudioContextCtor) return null;
+    try{ webAudioState.context=new AudioContextCtor(); }catch{ webAudioState.context=null; }
+    return webAudioState.context;
+  }
+
+  function prefetchSfxFile(name){
+    if(webAudioState.bytes.has(name)) return Promise.resolve(webAudioState.bytes.get(name));
+    if(webAudioState.fetches.has(name)) return webAudioState.fetches.get(name);
+    const src=SFX_SOURCES[name];
+    if(!src) return Promise.reject(new Error("Unknown SFX"));
+    const job=fetch(src,{cache:"force-cache"})
+      .then(r=>{if(!r.ok) throw new Error(`SFX ${r.status}`); return r.arrayBuffer();})
+      .then(buf=>{webAudioState.bytes.set(name,buf);return buf;})
+      .finally(()=>webAudioState.fetches.delete(name));
+    webAudioState.fetches.set(name,job);
+    return job;
+  }
+
+  function prefetchAllSfx(){
+    // Network fetch is allowed before playback permission, so start as early as possible.
+    return Promise.allSettled(Object.keys(SFX_SOURCES).map(prefetchSfxFile));
+  }
+
+  async function warmSfxWebAudio(){
+    if(webAudioState.warmPromise) return webAudioState.warmPromise;
+    const ctx=ensureAudioContext();
+    if(!ctx) return false;
+    webAudioState.warmPromise=(async()=>{
+      await prefetchAllSfx();
+      await Promise.all(Object.keys(SFX_SOURCES).map(async name=>{
+        if(webAudioState.buffers.has(name)) return;
+        const bytes=webAudioState.bytes.get(name);
+        if(!bytes) return;
+        try{
+          const buffer=await ctx.decodeAudioData(bytes.slice(0));
+          webAudioState.buffers.set(name,buffer);
+        }catch{}
+      }));
+      return webAudioState.buffers.size>0;
+    })().finally(()=>{ webAudioState.warmPromise=null; });
+    return webAudioState.warmPromise;
+  }
+
   function unlockAudio(){
-    if(audioState.unlocked) return;
     audioState.unlocked=true;
-    if(audioState.bgmVolume>0 && !document.hidden){
-      bgmAudio.play().catch(()=>{});
-    }
+    const ctx=ensureAudioContext();
+    if(ctx && ctx.state==="suspended") ctx.resume().catch(()=>{});
+    // Decode while the user is logging in / reading the home screen.
+    warmSfxWebAudio().catch(()=>{});
+    if(audioState.bgmVolume>0 && !document.hidden) bgmAudio.play().catch(()=>{});
   }
   function ensureBgm(){
     if(!audioState.unlocked || document.hidden || audioState.bgmVolume<=0) return;
     if(bgmAudio.paused) bgmAudio.play().catch(()=>{});
   }
+
+  function playWebAudio(name){
+    if(!audioState.unlocked || audioState.sfxVolume<=0) return false;
+    const ctx=ensureAudioContext(), buffer=webAudioState.buffers.get(name);
+    if(!ctx || !buffer || ctx.state!=="running") return false;
+    try{
+      const source=ctx.createBufferSource();
+      const gain=ctx.createGain();
+      source.buffer=buffer;
+      gain.gain.value=audioState.sfxVolume;
+      source.connect(gain);
+      gain.connect(ctx.destination);
+      source.start(0);
+      return true;
+    }catch{return false;}
+  }
+
   function playPooled(pool, indexName){
     if(!audioState.unlocked || audioState.sfxVolume<=0) return;
     const indexMap={swipe:swipeAudioIndex,confirm:confirmAudioIndex,audience:audienceAudioIndex,victory:victoryAudioIndex,reignEnd:reignEndAudioIndex};
@@ -1019,11 +1122,18 @@ const TITLES = [
     else if(indexName==="victory") victoryAudioIndex=next;
     else if(indexName==="reignEnd") reignEndAudioIndex=next;
   }
-  function playSwipeSound(){ playPooled(swipeAudioPool,"swipe"); }
-  function playConfirmSound(){ playPooled(confirmAudioPool,"confirm"); }
-  function playAudienceSound(){ playPooled(audienceAudioPool,"audience"); }
-  function playVictorySound(){ playPooled(victoryAudioPool,"victory"); }
-  function playReignEndSound(){ playPooled(reignEndAudioPool,"reignEnd"); }
+
+  function playSfx(name,pool,indexName){
+    if(playWebAudio(name)) return;
+    playPooled(pool,indexName);
+    // If this was the first call before decode completed, keep warming for the next interaction.
+    warmSfxWebAudio().catch(()=>{});
+  }
+  function playSwipeSound(){ playSfx("swipe",swipeAudioPool,"swipe"); }
+  function playConfirmSound(){ playSfx("confirm",confirmAudioPool,"confirm"); }
+  function playAudienceSound(){ playSfx("audience",audienceAudioPool,"audience"); }
+  function playVictorySound(){ playSfx("victory",victoryAudioPool,"victory"); }
+  function playReignEndSound(){ playSfx("reignEnd",reignEndAudioPool,"reignEnd"); }
 
   const ICONS = {
     // 한눈에 뜻이 들어오도록 단순화한 단색 SVG 아이콘.
@@ -2057,6 +2167,13 @@ const TITLES = [
   }
   function escapeHtml(s){return String(s??"").replace(/[&<>'"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"})[c])}
 
+  function showLoginLoading(){
+    if(!els.loginLoadingVeil) return;
+    els.loginLoadingVeil.classList.remove("hidden");
+  }
+  function hideLoginLoading(){ els.loginLoadingVeil?.classList.add("hidden"); }
+  const wait=ms=>new Promise(resolve=>setTimeout(resolve,ms));
+
   // Events
   els.loginForm.addEventListener("submit",async e=>{
     e.preventDefault(); els.loginMessage.textContent="";
@@ -2064,8 +2181,24 @@ const TITLES = [
     if(!/^\d{3,6}$/.test(no)) return els.loginMessage.textContent="학번은 숫자로 입력해 주세요.";
     if(!name) return els.loginMessage.textContent="이름을 입력해 주세요.";
     if(!/^\d{4}$/.test(pin)) return els.loginMessage.textContent="PIN은 숫자 4자리입니다.";
-    try{await login(no,name,pin);updateHome();showScreen("homeScreen");}
-    catch(err){els.loginMessage.textContent=err.message||"로그인하지 못했습니다."}
+
+    unlockAudio();
+    showLoginLoading();
+    const minimumVeil=wait(450);
+    // SFX decoding runs in parallel with login; do not block indefinitely if a sound file is missing.
+    const audioWarm=Promise.race([warmSfxWebAudio(),wait(1400)]).catch(()=>{});
+    try{
+      await login(no,name,pin);
+      await Promise.allSettled([minimumVeil,audioWarm]);
+      updateHome();
+      showScreen("homeScreen");
+      hideLoginLoading();
+    }
+    catch(err){
+      await minimumVeil;
+      hideLoginLoading();
+      els.loginMessage.textContent=err.message||"로그인하지 못했습니다.";
+    }
   });
   els.logoutBtn.addEventListener("click",returnToLogin);
   els.startBtn.addEventListener("click",newRun); els.playAgainBtn.addEventListener("click",()=>{updateHome();showScreen("homeScreen")});
@@ -2105,6 +2238,7 @@ const TITLES = [
   document.addEventListener("visibilitychange",()=>{if(document.hidden) bgmAudio.pause(); else ensureBgm();});
 
   window.addEventListener("error",e=>console.error("App error:",e.error||e.message));
+  prefetchAllSfx().catch(()=>{});
   loadAudioPrefs();
   renderLoginRanking("best",{force:true});
 })();
