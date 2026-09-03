@@ -633,6 +633,52 @@ window.APP_CONFIG = {
   수치는 학생 화면에 직접 공개되지 않으며, 선택 전에는 영향받는 지표와 대략적 크기만 예고됩니다.
 */
 
+const AUDIO_CONFIG = {
+  bgmSrc: "assets/audio/bgm.mp3",
+  swipeSrc: "assets/audio/card_swipe.mp3",
+  bgmVolume: 0.28,
+  swipeVolume: 0.62
+};
+
+const bgmAudio = new Audio(AUDIO_CONFIG.bgmSrc);
+bgmAudio.loop = true;
+bgmAudio.preload = "auto";
+bgmAudio.volume = AUDIO_CONFIG.bgmVolume;
+
+const swipeAudioBase = new Audio(AUDIO_CONFIG.swipeSrc);
+swipeAudioBase.preload = "auto";
+swipeAudioBase.volume = AUDIO_CONFIG.swipeVolume;
+
+let audioUnlocked = false;
+let bgmWanted = true;
+
+function startBgmFromGesture() {
+  audioUnlocked = true;
+  if (!bgmWanted || document.hidden) return;
+  bgmAudio.play().catch(()=>{});
+}
+
+function playCardSwipeSound() {
+  if (!audioUnlocked) return;
+  try {
+    const sound = swipeAudioBase.cloneNode(true);
+    sound.volume = AUDIO_CONFIG.swipeVolume;
+    sound.currentTime = 0;
+    const promise = sound.play();
+    if (promise?.catch) promise.catch(()=>{});
+  } catch {}
+}
+
+// 모바일 브라우저 자동재생 제한 대응: 첫 사용자 조작에서 BGM을 시작한다.
+document.addEventListener("pointerdown", startBgmFromGesture, {passive:true});
+document.addEventListener("keydown", startBgmFromGesture);
+
+// 다른 탭/앱으로 이동하면 음악을 멈추고, 돌아오면 다시 이어서 재생한다.
+document.addEventListener("visibilitychange", ()=>{
+  if (document.hidden) bgmAudio.pause();
+  else if (audioUnlocked && bgmWanted) bgmAudio.play().catch(()=>{});
+});
+
 const STAT_KEYS = ["treasury", "military", "elite", "people", "food"];
 
 const STAT_META = {
@@ -1618,6 +1664,7 @@ const TITLES = [
     els.leftChoiceOverlay.style.opacity=0; els.rightChoiceOverlay.style.opacity=0; clearPreview();
   }
   function animateExit(side, cb) {
+    playCardSwipeSound();
     const dir=side==="right"?1:-1;
     els.decisionCard.style.transition="transform .28s ease, opacity .25s";
     els.decisionCard.style.transform=`translateX(${dir*145}%) rotate(${dir*10}deg)`; els.decisionCard.style.opacity="0";
