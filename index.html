@@ -1462,7 +1462,6 @@ const TITLES = [
 
   function formatBannerBody(body) {
     return String(body||"")
-      .replace(/\s*·\s*/g, "\n")
       .split(/\n+/)
       .map(part=>part.trim())
       .filter(Boolean)
