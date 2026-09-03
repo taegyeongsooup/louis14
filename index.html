@@ -1,0 +1,1834 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#0d0805" />
+  <title>짐이 곧 국가다</title>
+  <style>
+:root{
+  --bg:#0c0805;
+  --panel:#15100c;
+  --panel-2:#1d150f;
+  --panel-3:#24190f;
+  --ink:#f1ead9;
+  --muted:#a99a79;
+  --muted-2:#786c55;
+  --gold:#bca36a;
+  --gold-bright:#dec47f;
+  --danger:#bd6b5e;
+  --line:rgba(214,189,122,.20);
+  --line-strong:rgba(214,189,122,.38);
+  --shadow:0 22px 70px rgba(0,0,0,.48);
+  --radius:22px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;background:radial-gradient(circle at 50% -12%,#2a180d 0,#120b07 36%,#080504 100%);color:var(--ink);font-family:"Pretendard","Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic","Segoe UI",Arial,sans-serif}
+body{min-height:100dvh;overflow-x:hidden}
+button,input{font:inherit}
+button{color:inherit}
+button:focus-visible,input:focus-visible{outline:2px solid rgba(222,196,127,.78);outline-offset:2px}
+.desktop-shell{min-height:100dvh;display:grid;place-items:center;padding:0}
+.app-shell{position:relative;width:min(100vw,430px);height:100dvh;max-height:920px;overflow:hidden;background:linear-gradient(rgba(24,15,9,.88),rgba(8,5,4,.98)),radial-gradient(circle at 50% 0,rgba(188,163,106,.12),transparent 42%);box-shadow:var(--shadow)}
+@media (min-width:600px){.desktop-shell{padding:22px}.app-shell{height:min(920px,calc(100dvh - 44px));border:1px solid rgba(214,189,122,.24);border-radius:30px}}
+.screen{display:none;height:100%;overflow:auto;padding:22px 22px calc(28px + env(safe-area-inset-bottom));scrollbar-width:none}.screen::-webkit-scrollbar{display:none}.screen-active{display:block}
+.hidden{display:none!important}
+.eyebrow{margin:0 0 6px;color:var(--gold);font-size:.68rem;font-weight:900;letter-spacing:.15em;text-transform:uppercase}
+.game-title{font-size:2.55rem;line-height:1;font-weight:900;letter-spacing:.08em;margin:0;color:#f4e7c5;text-shadow:0 0 28px rgba(188,163,106,.16)}
+.subtitle{color:#c1ad80;font-size:.82rem;font-weight:800;letter-spacing:.05em;margin:7px 0 0}
+.primary-btn,.secondary-btn,.ghost-btn{width:100%;border-radius:14px;padding:14px 16px;font-weight:900;cursor:pointer;transition:transform .15s,border-color .15s,filter .15s}
+.primary-btn:active,.secondary-btn:active,.ghost-btn:active{transform:translateY(1px)}
+.primary-btn{border:1px solid #d7bd78;background:linear-gradient(180deg,#ccb16e,#a18042);color:#171008;box-shadow:0 8px 24px rgba(0,0,0,.24)}
+.secondary-btn{border:1px solid var(--line-strong);background:rgba(188,163,106,.075);color:#eadbb8}
+.ghost-btn{border:1px solid var(--line);background:transparent;color:var(--muted)}
+.text-btn{border:0;background:transparent;color:var(--muted);font-size:.73rem;font-weight:800;cursor:pointer;padding:7px}
+.form-message{color:#df958a;min-height:1.25em;font-size:.76rem;margin:10px 0 0}
+.tiny-note{font-size:.64rem;line-height:1.5;color:#76694f}
+
+/* Login */
+.login-screen{padding-top:24px;background:radial-gradient(circle at 50% -3%,rgba(123,77,33,.18),transparent 32%)}
+.login-masthead{display:flex;align-items:center;justify-content:center;margin-bottom:18px;text-align:center}.title-art{display:block;width:min(240px,68vw);height:auto;object-fit:contain;filter:drop-shadow(0 8px 22px rgba(188,163,106,.10));user-select:none;-webkit-user-drag:none}
+.brand-sun{width:60px;height:60px;flex:0 0 60px;border:1px solid var(--line-strong);border-radius:50%;display:grid;place-items:center;color:var(--gold-bright);font-size:1.6rem;background:rgba(188,163,106,.045);box-shadow:inset 0 0 24px rgba(188,163,106,.05)}
+.login-card{border:1px solid var(--line);border-radius:20px;padding:17px;background:linear-gradient(180deg,rgba(188,163,106,.045),rgba(255,255,255,.012));box-shadow:inset 0 1px rgba(255,255,255,.025)}
+.login-card-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:15px}.login-card-head h2{margin:0;font-size:1.08rem}.login-badge,.rank-live-badge{border:1px solid var(--line);border-radius:99px;padding:5px 8px;color:#a99569;font-size:.57rem;font-weight:900;letter-spacing:.08em;white-space:nowrap}
+.login-form{display:grid;gap:11px;text-align:left}.login-row-two{display:grid;grid-template-columns:.8fr 1.2fr;gap:9px}.login-form label{font-size:.67rem;font-weight:800;color:#aa9a79}.login-form input{display:block;width:100%;margin-top:6px;border:1px solid rgba(214,189,122,.22);background:#0d0906;color:#f0e7d1;border-radius:12px;padding:11px 12px;font-size:.86rem;outline:none;transition:border-color .15s,background .15s}.login-form input:focus{border-color:rgba(222,196,127,.65);background:#100b07}.login-submit{margin-top:2px}
+.public-ranking-panel{margin-top:18px;border:1px solid var(--line);border-radius:20px;padding:16px;background:rgba(8,5,3,.34)}
+.public-ranking-heading,.home-section-heading{display:flex;align-items:flex-end;justify-content:space-between;gap:12px}.public-ranking-heading h2,.home-section-heading h3{margin:0;font-size:1.02rem}
+.ranking-switch{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin:13px 0 10px;padding:4px;border:1px solid rgba(214,189,122,.13);background:rgba(0,0,0,.17);border-radius:12px}.ranking-switch-btn{border:0;background:transparent;color:#81745c;padding:9px 8px;border-radius:9px;font-size:.68rem;font-weight:900;cursor:pointer}.ranking-switch-btn.active{background:rgba(188,163,106,.13);color:#ead8ad;box-shadow:inset 0 0 0 1px rgba(214,189,122,.18)}
+.public-ranking-list{min-height:122px}.ranking-source-note{margin:9px 2px 0;color:#675c49;font-size:.58rem;line-height:1.45;text-align:center}.login-note{text-align:center;margin:14px 8px 0}
+
+/* Home */
+.home-header,.ranking-header,.game-topbar{display:flex;align-items:flex-start;justify-content:space-between;gap:16px}.home-header h2,.ranking-header h2{margin:0;font-size:1.3rem}
+.home-command-card{margin-top:22px;border:1px solid var(--line-strong);border-radius:20px;padding:18px;background:linear-gradient(145deg,rgba(188,163,106,.08),rgba(255,255,255,.015))}.home-command-top{display:flex;align-items:center;gap:12px}.home-command-top h3{margin:0;font-size:1.1rem}.home-command-card>p{color:var(--muted);font-size:.75rem;line-height:1.6;margin:13px 0 15px}.sun-medallion.small{width:44px;height:44px;flex:0 0 44px;border:1px solid var(--line-strong);border-radius:50%;display:grid;place-items:center;color:var(--gold)} .sun-medallion.small img{width:100%;height:100%;display:block;object-fit:cover;border-radius:50%}
+.profile-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin:12px 0}.profile-strip>div{min-width:0;border:1px solid var(--line);border-radius:13px;padding:10px 6px;text-align:center;background:rgba(255,255,255,.016)}.profile-strip span{display:block;color:#8d7f63;font-size:.58rem;font-weight:800}.profile-strip strong{display:block;margin-top:3px;font-size:.9rem;white-space:nowrap}.home-titlebook-btn{margin-bottom:18px}.home-ranking-panel{border-top:1px solid var(--line);padding-top:17px}.home-ranking-list{max-height:290px;overflow:auto;scrollbar-width:thin}
+
+/* Shared ranking */
+.ranking-list{display:grid;gap:7px}.rank-row{display:grid;grid-template-columns:29px minmax(0,1fr) auto;align-items:center;gap:9px;border:1px solid rgba(214,189,122,.14);border-radius:12px;padding:10px;background:rgba(255,255,255,.016)}.rank-row.me{border-color:rgba(214,189,122,.5);background:rgba(188,163,106,.07)}.rank-row:nth-child(1) .rank-num{color:#f0cf76}.rank-row:nth-child(2) .rank-num{color:#cbbfa5}.rank-row:nth-child(3) .rank-num{color:#bd8d61}.rank-num{font-size:.92rem;font-weight:900;color:#9e8a5d;text-align:center}.rank-name{font-size:.73rem;font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.rank-meta{font-size:.56rem;color:#82745a;margin-top:2px}.rank-titles{font-size:.54rem;color:#9c875d;margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:205px}.rank-score{text-align:right;min-width:44px}.rank-score strong{display:block;font-size:.92rem}.rank-score span{font-size:.52rem;color:#766951}.empty-state{border:1px dashed rgba(214,189,122,.14);border-radius:12px;text-align:center;color:#75694f;padding:31px 12px;font-size:.69rem;line-height:1.5}.empty-state.compact{padding:28px 12px}
+
+/* Game */
+.game-screen{padding:14px 14px calc(14px + env(safe-area-inset-bottom));overflow:hidden}.game-topbar{height:46px;align-items:center;padding:0 4px}.turn-block{display:grid;gap:2px}.turn-block span{font-size:.62rem;color:#8f8167}.turn-block strong{font-size:.78rem;letter-spacing:.04em}
+.stat-bar{height:75px;display:grid;grid-template-columns:repeat(5,1fr);align-items:center;gap:2px;padding:2px 2px 0}.stat-item{position:relative;text-align:center;min-width:0}.stat-icon{width:27px;height:27px;margin:auto;color:#bca36a;transition:transform .12s,color .12s,opacity .12s}.stat-icon svg{width:100%;height:100%;display:block}.stat-preview{position:absolute;left:50%;top:-6px;transform:translateX(-50%);height:12px;font-size:.55rem;font-weight:900;letter-spacing:-.06em;opacity:0;color:#ead598;transition:opacity .12s,transform .12s}.stat-track{height:3px;margin:5px auto 0;border-radius:20px;background:rgba(255,255,255,.07);overflow:hidden;width:74%}.stat-fill{height:100%;width:50%;background:var(--gold);border-radius:20px;transition:width .5s cubic-bezier(.2,.75,.2,1)}.stat-label{display:block;margin-top:4px;color:#948568;font-size:.52rem;font-weight:900;line-height:1;white-space:nowrap}.stat-item.preview-up .stat-icon{transform:translateY(-3px) scale(1.08);color:#ead598}.stat-item.preview-down .stat-icon{transform:translateY(3px) scale(.94);opacity:.56}.stat-item.preview-up .stat-preview,.stat-item.preview-down .stat-preview{opacity:1;transform:translateX(-50%) translateY(-1px)}.stat-item.preview-up .stat-label{color:#cdb984}.stat-item.preview-down .stat-label{color:#756a55}.stat-item.stat-pulse-up .stat-icon{animation:pulseUp .55s}.stat-item.stat-pulse-down .stat-icon{animation:pulseDown .55s}.stat-item.danger .stat-fill{animation:dangerPulse 1.1s infinite}.unrest-hint{text-align:center;font-size:.59rem;color:#746950;height:18px}.event-banner{margin:0 5px 7px;border:1px solid rgba(214,189,122,.18);background:rgba(188,163,106,.045);color:#c8b487;font-size:.65rem;padding:7px 9px;border-radius:9px;text-align:center}
+.card-stage{height:calc(100dvh - 246px);max-height:620px;min-height:425px;display:grid;place-items:center;padding:2px 5px 7px}.decision-card{position:relative;width:100%;height:100%;max-height:600px;border:1px solid rgba(214,189,122,.24);border-radius:24px;overflow:hidden;background:#130e0a;box-shadow:0 20px 45px rgba(0,0,0,.38);touch-action:none;user-select:none;transform-origin:50% 90%;will-change:transform;cursor:grab}.decision-card:active{cursor:grabbing}.portrait-wrap{position:absolute;inset:0 0 42% 0;background:radial-gradient(circle at 50% 33%,#4a3320 0,#21150d 48%,#100b08 100%);overflow:hidden}.character-image{width:100%;height:100%;object-fit:contain;object-position:center bottom;filter:saturate(.84) sepia(.07)}.character-fallback{position:absolute;inset:0;background:linear-gradient(145deg,transparent 15%,rgba(255,255,255,.016),transparent 80%)}.character-fallback::after{content:"";position:absolute;width:92px;height:120px;left:50%;top:48%;transform:translate(-50%,-50%);border-radius:50% 50% 42% 42%;background:linear-gradient(180deg,rgba(214,189,122,.18),rgba(214,189,122,.05))}.portrait-vignette{position:absolute;inset:0;background:linear-gradient(180deg,transparent 48%,#130e0a 98%),linear-gradient(90deg,rgba(0,0,0,.35),transparent 20%,transparent 80%,rgba(0,0,0,.35))}.card-copy{position:absolute;left:0;right:0;bottom:0;min-height:48%;padding:18px 21px 21px;background:linear-gradient(180deg,rgba(19,14,10,.1),#130e0a 13%,#130e0a)}.speaker-role{color:var(--gold);font-size:.62rem;font-weight:900;letter-spacing:.07em;margin:0 0 3px}.speaker-name{font-size:1.15rem;margin:0 0 9px;color:#f1e6cc}.card-title{font-size:.88rem;margin:0 0 7px;color:#c9b786}.card-text{font-size:.81rem;line-height:1.65;color:#ded4bd;margin:0}.choice-overlay{position:absolute;z-index:5;top:15px;max-width:70%;padding:9px 11px;border-radius:10px;background:rgba(10,7,5,.80);border:1px solid rgba(214,189,122,.3);font-size:.72rem;font-weight:900;line-height:1.35;opacity:0;pointer-events:none;transition:opacity .1s}.choice-left{left:13px;text-align:left}.choice-right{right:13px;text-align:right}.swipe-hint{display:flex;justify-content:space-between;color:#695f4d;font-size:.57rem;padding:0 9px;height:15px}.tap-actions{display:grid;grid-template-columns:1fr 1fr;gap:7px;padding:0 5px}.tap-choice{border:1px solid rgba(214,189,122,.18);background:rgba(255,255,255,.018);border-radius:11px;padding:8px 7px;color:#ad9d7c;font-size:.63rem;line-height:1.25;min-height:43px;cursor:pointer}.tap-choice:hover{border-color:rgba(214,189,122,.42);color:#e0d0ad}
+
+/* Audience */
+.audience-screen{background:radial-gradient(circle at 50% 4%,rgba(102,60,29,.30),transparent 34%)}.audience-heading{text-align:center;padding:38px 6px 15px}.audience-heading h2{font-size:1.8rem;margin:0 0 7px}.audience-heading p:last-child{color:var(--muted);font-size:.78rem;line-height:1.55}.audience-grid{display:grid;gap:10px;margin-top:13px}.audience-person{display:grid;grid-template-columns:68px 1fr;gap:12px;align-items:center;border:1px solid var(--line);border-radius:17px;padding:10px;background:rgba(255,255,255,.022);cursor:pointer;transition:.18s}.audience-person:hover{transform:translateY(-2px);border-color:rgba(214,189,122,.4);background:rgba(188,163,106,.06)}.audience-portrait{width:68px;height:82px;border-radius:11px;background:#25170e;overflow:hidden;position:relative}.audience-portrait img{width:100%;height:100%;object-fit:contain}.audience-portrait .fallback-mini{position:absolute;inset:0;background:radial-gradient(circle at 50% 34%,rgba(214,189,122,.18) 0 11%,transparent 12%),radial-gradient(ellipse at 50% 78%,rgba(214,189,122,.10) 0 30%,transparent 31%)}.audience-copy small{color:var(--gold);font-size:.61rem;font-weight:900}.audience-copy h3{margin:3px 0 4px;font-size:.9rem}.audience-copy p{margin:0;color:var(--muted);font-size:.69rem;line-height:1.42}.audience-warning{text-align:center;font-size:.62rem;color:#796b54;margin-top:14px;line-height:1.5}
+
+/* Result */
+.result-screen{text-align:center}.result-screen>.eyebrow{margin-top:22px}.result-screen h2{margin:4px 0 8px;font-size:1.28rem}.result-cause{display:inline-block;margin:4px auto 10px;border:1px solid rgba(189,107,94,.38);color:#dc9589;background:rgba(189,107,94,.08);padding:7px 12px;border-radius:99px;font-size:.68rem}.score-orb{width:118px;height:118px;border:1px solid rgba(214,189,122,.38);border-radius:50%;margin:23px auto 8px;display:grid;place-content:center;background:radial-gradient(circle,rgba(188,163,106,.1),transparent 68%);box-shadow:0 0 45px rgba(188,163,106,.08)}.score-orb strong{font-size:2.25rem}.score-orb span{font-size:.64rem;color:var(--muted)}.grade-badge{display:inline-grid;place-items:center;width:46px;height:27px;border:1px solid rgba(214,189,122,.45);border-radius:99px;color:#e4cc90;font-weight:900}.result-score-note{margin:7px 0 0;color:#b79f72;font-size:.66rem;font-weight:800}.result-main-title{color:#efdcae;font-size:1.3rem;margin:14px 0 5px}.result-summary{color:var(--muted);font-size:.74rem;line-height:1.58;margin:0 auto 16px;max-width:330px}.result-stats{display:grid;grid-template-columns:repeat(5,1fr);gap:5px;margin:15px 0}.result-stat{border:1px solid var(--line);border-radius:11px;padding:9px 2px}.result-stat svg{width:20px;height:20px;color:var(--gold)}.result-stat strong{display:block;font-size:.84rem;margin-top:3px}.result-stat span{display:block;font-size:.53rem;color:var(--muted)}.rank-summary{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin:12px 0 22px}.rank-summary>div{border:1px solid var(--line);border-radius:13px;padding:11px}.rank-summary span{display:block;color:var(--muted);font-size:.6rem}.rank-summary strong{display:block;margin-top:4px}.result-section{text-align:left;border-top:1px solid var(--line);padding:18px 2px}.section-title-row{display:flex;align-items:center;justify-content:space-between}.section-title-row h3{margin:0;font-size:.9rem}.section-title-row strong{color:var(--gold);font-size:1.05rem}.section-title-row span{font-size:.61rem;color:var(--muted)}.title-list{display:grid;gap:7px;margin-top:10px}.title-chip{display:flex;justify-content:space-between;align-items:center;padding:9px 11px;border:1px solid var(--line);border-radius:11px;background:rgba(255,255,255,.016)}.title-chip strong{font-size:.75rem}.tier{font-size:.57rem;color:var(--gold)}.small-copy{font-size:.62rem;color:var(--muted);margin:7px 0 11px}.history-list{display:grid;gap:6px}.history-row{display:grid;grid-template-columns:1fr 58px 58px;align-items:center;gap:4px;font-size:.66rem;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.035)}.history-row .history-label{text-align:left}.history-cell{font-weight:900;text-align:center}.history-cell.muted{color:#6f6653}.result-actions{display:grid;gap:7px;padding-top:8px}
+
+/* Title book */
+.titlebook-list{display:grid;gap:8px;margin-top:22px}.book-title{border:1px solid var(--line);border-radius:13px;padding:12px;background:rgba(255,255,255,.016)}.book-title.locked{opacity:.38;filter:grayscale(1)}.book-title-top{display:flex;justify-content:space-between;align-items:center}.book-title strong{font-size:.78rem}.book-title p{color:var(--muted);font-size:.63rem;line-height:1.43;margin:5px 0 0}
+
+/* Modal */
+.modal{position:fixed;inset:0;z-index:1000;display:grid;place-items:center;padding:20px;background:rgba(0,0,0,.66);backdrop-filter:blur(4px)}.modal-card{width:min(370px,100%);border:1px solid var(--line-strong);border-radius:20px;background:linear-gradient(180deg,#1b120d,#100b08);padding:21px;box-shadow:0 22px 70px rgba(0,0,0,.55)}.modal-card h3{margin:0 0 9px;font-size:1.08rem}.modal-card>p:not(.eyebrow){color:var(--muted);font-size:.76rem;line-height:1.6;white-space:pre-line}.modal-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:18px}
+
+@keyframes pulseUp{0%,100%{transform:translateY(0)}45%{transform:translateY(-6px) scale(1.14)}}
+@keyframes pulseDown{0%,100%{transform:translateY(0)}45%{transform:translateY(5px) scale(.91);opacity:.5}}
+@keyframes dangerPulse{50%{opacity:.3}}
+@media(max-height:700px){.card-stage{min-height:360px;height:calc(100dvh - 236px)}.card-copy{padding:14px 18px 16px}.card-text{font-size:.75rem}.portrait-wrap{inset:0 0 47% 0}.tap-choice{min-height:39px;padding:7px}.login-masthead{margin-bottom:14px}.public-ranking-panel{margin-top:13px}}
+
+/* v0.4: 자동 후속 결과 카드는 좌우 선택 UI 대신 중앙 확인 버튼만 사용 */
+.game-screen.followup-result .swipe-hint{display:none}
+.game-screen.followup-result .tap-actions{grid-template-columns:1fr;padding:2px 34px 0}
+.game-screen.followup-result .tap-choice.right-choice{width:100%;min-height:50px;font-size:.74rem;font-weight:900;color:#1a120a;background:linear-gradient(180deg,#d9bf79,#b99b57);border-color:#e2ca88;box-shadow:0 8px 24px rgba(0,0,0,.22)}
+.game-screen.followup-result .card-stage{height:calc(100dvh - 222px)}
+
+
+/* v0.5: readability, ranking title tiers, stat preview spacing */
+.eyebrow{font-size:.76rem;line-height:1.35}
+.subtitle{font-size:.9rem}
+.login-card{padding:19px}
+.login-card-head h2{font-size:1.28rem}
+.login-form{gap:13px}
+.login-form label{font-size:.78rem}
+.login-form input{padding:13px 13px;font-size:1rem}
+.primary-btn,.secondary-btn,.ghost-btn{font-size:.96rem;padding:15px 16px}
+.form-message{font-size:.82rem}
+.tiny-note{font-size:.72rem;line-height:1.6}
+.public-ranking-panel{padding:18px}
+.public-ranking-heading h2{font-size:1.22rem}
+.rank-live-badge{font-size:.64rem;padding:6px 9px}
+.ranking-switch-btn{font-size:.82rem;padding:10px 8px}
+.public-ranking-list{min-height:138px}
+.rank-row{grid-template-columns:32px minmax(0,1fr) auto;gap:10px;padding:12px 11px}
+.rank-num{font-size:1.08rem}
+.rank-name{font-size:.87rem}
+.rank-meta{font-size:.68rem;margin-top:4px;line-height:1.35}
+.rank-titles{font-size:.65rem;margin-top:6px;line-height:1.5;white-space:normal;overflow:visible;max-width:none}
+.rank-title{font-weight:800;margin-right:3px}
+.rank-title.tier-1{color:#9e9584}
+.rank-title.tier-2{color:#8fbd9b}
+.rank-title.tier-3{color:#83add4}
+.rank-title.tier-4{color:#c89be4;text-shadow:0 0 12px rgba(200,155,228,.12)}
+.rank-title.tier-5{color:#f1cf70;text-shadow:0 0 14px rgba(241,207,112,.22)}
+.rank-score{min-width:54px}
+.rank-score strong{font-size:1.08rem}
+.rank-score span{font-size:.62rem}
+.empty-state{font-size:.78rem}
+.home-header h2{font-size:1.48rem}
+.home-command-top h3{font-size:1.22rem}
+.home-command-card>p{font-size:.85rem;line-height:1.7}
+.profile-strip span{font-size:.67rem}
+.profile-strip strong{font-size:1rem}
+.home-titlebook-btn{margin-bottom:0}
+.turn-block span{font-size:.68rem}
+.turn-block strong{font-size:.86rem}
+.stat-bar{height:88px;align-items:start;padding:6px 2px 0}
+.stat-item{padding-top:17px}
+.stat-preview{top:0;height:15px;font-size:.62rem;line-height:1;z-index:3}
+.stat-icon{width:29px;height:29px}
+.stat-label{font-size:.58rem;margin-top:5px}
+.stat-item.preview-up .stat-icon{transform:scale(1.12);color:#ead598}
+.stat-item.preview-down .stat-icon{transform:scale(.94);opacity:.56}
+.stat-item.preview-up .stat-preview,.stat-item.preview-down .stat-preview{opacity:1;transform:translateX(-50%)}
+.unrest-hint{font-size:.65rem;height:19px}
+.event-banner{font-size:.72rem}
+.speaker-role{font-size:.7rem}
+.speaker-name{font-size:1.27rem}
+.card-title{font-size:.98rem}
+.card-text{font-size:.9rem;line-height:1.7}
+.choice-overlay{font-size:.8rem}
+.swipe-hint{font-size:.64rem}
+.tap-choice{font-size:.72rem;min-height:46px}
+.result-summary{font-size:.82rem}
+.small-copy{font-size:.7rem}
+.history-row{font-size:.73rem}
+.book-title strong{font-size:.86rem}
+.book-title p{font-size:.7rem}
+
+/* v0.6: TOP10 ranking chips, readable PIN note, compact adaptive cards */
+.public-ranking-list{min-height:138px;display:grid;gap:8px}
+.rank-titles{display:flex;flex-wrap:wrap;gap:5px 6px;margin-top:7px;line-height:1.2}
+.rank-title{display:inline-flex;align-items:center;max-width:100%;padding:4px 7px;border:1px solid currentColor;border-radius:999px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:.62rem;line-height:1;font-weight:850;background:rgba(255,255,255,.015);margin:0}
+.rank-title.tier-1{border-color:rgba(158,149,132,.40)}
+.rank-title.tier-2{border-color:rgba(143,189,155,.45);background:rgba(143,189,155,.045)}
+.rank-title.tier-3{border-color:rgba(131,173,212,.48);background:rgba(131,173,212,.045)}
+.rank-title.tier-4{border-color:rgba(200,155,228,.50);background:rgba(200,155,228,.05)}
+.rank-title.tier-5{border-color:rgba(241,207,112,.58);background:rgba(241,207,112,.055)}
+.login-note{display:grid;gap:3px;margin-top:14px;line-height:1.5}
+.login-note span{display:block}
+.stat-bar{height:94px;padding-top:5px}
+.stat-item{padding-top:25px}
+.stat-preview{top:2px;height:17px;line-height:17px;font-size:.64rem}
+.stat-icon{width:29px;height:29px}
+.game-screen{overflow-y:auto;overflow-x:hidden}
+.card-stage{height:clamp(410px,52dvh,500px);min-height:0;max-height:none;padding:2px 5px 6px;transition:height .18s ease}
+.game-screen.card-compact .card-stage{height:clamp(355px,43dvh,420px)}
+.game-screen.card-standard .card-stage{height:clamp(405px,50dvh,485px)}
+.game-screen.card-long .card-stage{height:clamp(455px,57dvh,555px)}
+.game-screen.followup-result.card-compact .card-stage{height:clamp(350px,42dvh,410px)}
+.game-screen.followup-result.card-standard .card-stage{height:clamp(390px,47dvh,455px)}
+.game-screen.followup-result.card-long .card-stage{height:clamp(440px,54dvh,520px)}
+.game-screen.followup-result .tap-actions{grid-template-columns:1fr;padding:7px 30px 4px}
+.game-screen.followup-result .tap-choice.right-choice{min-height:52px;font-size:.82rem}
+.swipe-hint{margin-top:2px}
+.tap-actions{padding-bottom:4px}
+@media(max-height:740px){
+  .stat-bar{height:86px}.stat-item{padding-top:21px}.stat-preview{top:1px}
+  .game-screen.card-compact .card-stage{height:350px}
+  .game-screen.card-standard .card-stage{height:390px}
+  .game-screen.card-long .card-stage{height:440px}
+}
+
+
+
+/* v0.9: difficulty rebalance — hidden direction/magnitude, delayed policy costs, stronger late-game pressure */
+/* v0.7: audience readability/randomization, neutral Reigns-style preview, harder balance */
+.audience-screen{padding-top:18px;background:linear-gradient(180deg,rgba(65,39,22,.16),transparent 28%)}
+.audience-heading{padding:14px 4px 10px;text-align:center}
+.audience-heading .eyebrow{font-size:.82rem}
+.audience-heading h2{font-size:2.12rem;line-height:1;margin:6px 0 12px;letter-spacing:.02em}
+.audience-heading p:last-child{font-size:.94rem;line-height:1.62;color:#c4b28b;margin:0 auto;max-width:360px}
+.audience-stat-wrap{margin:8px 0 14px;padding:8px 8px 6px;border-top:1px solid rgba(214,189,122,.12);border-bottom:1px solid rgba(214,189,122,.12);background:rgba(0,0,0,.10)}
+.audience-stat-wrap .stat-bar{height:76px;padding-top:0}
+.audience-stat-wrap .stat-item{padding-top:8px}
+.audience-stat-wrap .stat-preview{display:none}
+.audience-stat-wrap .stat-icon{width:27px;height:27px}
+.audience-stat-wrap .stat-label{font-size:.61rem}
+.audience-grid{gap:12px;margin-top:8px}
+.audience-person{grid-template-columns:78px 1fr;gap:14px;padding:12px;border-radius:18px;min-height:112px;text-align:left}
+.audience-portrait{width:78px;height:92px;border-radius:12px;background:linear-gradient(180deg,#1d140f,#120c09)}
+.audience-portrait img{object-position:center bottom;filter:none}
+.audience-copy small{font-size:.70rem;letter-spacing:.02em}
+.audience-copy h3{font-size:1.08rem;margin:4px 0 6px}
+.audience-copy p{font-size:.82rem;line-height:1.48;color:#c6b897}
+.audience-warning{font-size:.72rem;margin:16px auto 0;max-width:350px;line-height:1.55}
+
+/* 인물 뒤의 둥근 광원 제거: 카드 자체의 어두운 색면만 사용 */
+.portrait-wrap{background:linear-gradient(180deg,#24180f 0%,#18100b 58%,#120c09 100%)}
+.portrait-vignette{background:linear-gradient(180deg,rgba(0,0,0,.05) 30%,#130e0a 98%),linear-gradient(90deg,rgba(0,0,0,.22),transparent 18%,transparent 82%,rgba(0,0,0,.22))}
+.character-fallback::after{background:linear-gradient(180deg,rgba(214,189,122,.10),rgba(214,189,122,.025))}
+
+/* Reigns식 사전 예고: 방향은 숨기고, 영향받는 지표와 대략적 크기만 표시 */
+.stat-preview{top:0;min-width:34px;height:18px;line-height:18px;font-size:.70rem;letter-spacing:.08em;color:#e3cc8c}
+.stat-item.preview-impact .stat-icon{transform:scale(1.10);color:#ead598;filter:drop-shadow(0 0 7px rgba(222,196,127,.20))}
+.stat-item.preview-impact .stat-preview{opacity:1;transform:translateX(-50%)}
+.stat-item.preview-impact .stat-label{color:#cdb984}
+
+/* 결과 - 실제 역사 비교를 하나의 눈에 띄는 카드로 */
+.history-compare{margin-top:8px;padding:18px 14px!important;border:1px solid rgba(214,189,122,.32)!important;border-radius:18px;background:linear-gradient(180deg,rgba(188,163,106,.075),rgba(255,255,255,.012));box-shadow:inset 0 1px rgba(255,255,255,.02)}
+.history-compare .section-title-row{align-items:center;gap:10px}
+.history-compare .section-title-row h3{font-size:1.04rem}
+.history-compare #similarityPercent{font-size:1.45rem;color:#f0d688;padding:5px 9px;border:1px solid rgba(214,189,122,.32);border-radius:10px;background:rgba(0,0,0,.14)}
+.history-list{gap:7px}
+.history-row{grid-template-columns:minmax(0,1fr) 62px 70px;padding:9px 8px;border:1px solid rgba(255,255,255,.04);border-radius:10px;background:rgba(0,0,0,.10)}
+.history-row.match{border-color:rgba(109,188,130,.28);background:rgba(72,139,91,.075)}
+.history-row.diff{border-color:rgba(203,104,92,.24);background:rgba(163,70,60,.065)}
+.history-row.pending{opacity:.58}
+.history-row.match .player-history{color:#82d095}
+.history-row.diff .player-history{color:#e08b7e}
+.history-row .louis-history{color:#cfbd92}
+.history-state{display:inline-flex;align-items:center;justify-content:center;min-width:50px;padding:4px 6px;border-radius:8px;font-size:.66rem;font-weight:900}
+.history-row.match .history-state{background:rgba(109,188,130,.11)}
+.history-row.diff .history-state{background:rgba(203,104,92,.10)}
+
+@media(max-height:760px){
+  .audience-heading{padding-top:8px}.audience-heading h2{font-size:1.85rem;margin-bottom:8px}.audience-heading p:last-child{font-size:.84rem}
+  .audience-stat-wrap{margin:5px 0 9px;padding:4px 7px 2px}.audience-stat-wrap .stat-bar{height:67px}.audience-stat-wrap .stat-item{padding-top:5px}
+  .audience-person{grid-template-columns:66px 1fr;min-height:96px;padding:9px}.audience-portrait{width:66px;height:78px}.audience-copy h3{font-size:.98rem}.audience-copy p{font-size:.75rem}
+}
+
+/* v0.10: title artwork */
+@media(max-height:760px){.title-art{width:min(210px,62vw)}.login-masthead{margin-bottom:13px}}
+@media(max-height:680px){.title-art{width:min(180px,56vw)}.login-screen{padding-top:16px}}
+
+
+
+/* v1.0: stronger banner emphasis, swipe-only play, fixed opposite-side choice callout, larger readable cards */
+.game-screen{padding:14px 14px calc(18px + env(safe-area-inset-bottom));overflow-y:auto;overflow-x:hidden}
+.stat-bar{height:96px;padding-top:8px}
+.stat-item{padding-top:25px}
+.unrest-hint{height:auto;min-height:28px;margin-top:2px;font-size:.86rem;line-height:1.45;font-weight:800;color:#b8a57b;text-align:center}
+.event-banner{margin:8px 2px 14px;padding:12px 14px;border-radius:14px;border:1px solid rgba(214,189,122,.22);background:linear-gradient(180deg,rgba(188,163,106,.08),rgba(255,255,255,.01));color:#edd6a0;font-size:.88rem;line-height:1.55;text-align:center;box-shadow:inset 0 1px rgba(255,255,255,.02)}
+.event-banner .event-kicker{display:block;margin-bottom:5px;font-size:.74rem;font-weight:900;letter-spacing:.08em;color:#ffe2a0}
+.event-banner .event-body{display:block;word-break:keep-all;text-wrap:pretty}
+.event-banner.banner-legacy{border-color:rgba(233,169,80,.45);background:linear-gradient(180deg,rgba(104,57,18,.48),rgba(50,26,11,.30));color:#ffe2b0}
+.event-banner.banner-legacy .event-kicker{color:#ffb85d}
+.event-banner.banner-followup{border-color:rgba(145,193,255,.36);background:linear-gradient(180deg,rgba(35,49,73,.50),rgba(20,26,38,.24));color:#dce9ff}
+.event-banner.banner-followup .event-kicker{color:#9ec3ff}
+.event-banner.banner-audience{border-color:rgba(214,189,122,.44);background:linear-gradient(180deg,rgba(76,55,21,.58),rgba(42,28,11,.28));color:#f4e5be}
+.event-banner.banner-audience .event-kicker{color:#f5d17d}
+.event-banner.banner-crisis{border-color:rgba(212,113,98,.44);background:linear-gradient(180deg,rgba(88,34,28,.60),rgba(47,18,15,.28));color:#ffd3ca}
+.event-banner.banner-crisis .event-kicker{color:#ff9f8f}
+.card-stage{position:relative;height:clamp(500px,66dvh,670px)!important;min-height:0;max-height:none;padding:16px 0 10px;transition:height .18s ease;margin-top:8px}
+.game-screen.card-compact .card-stage{height:clamp(470px,61dvh,590px)!important}
+.game-screen.card-standard .card-stage{height:clamp(540px,68dvh,680px)!important}
+.game-screen.card-long .card-stage{height:clamp(600px,74dvh,760px)!important}
+.game-screen.followup-result.card-compact .card-stage,.game-screen.followup-result.card-standard .card-stage,.game-screen.followup-result.card-long .card-stage{height:clamp(500px,66dvh,650px)!important}
+.decision-card{z-index:2;max-height:none;overflow:hidden}
+.portrait-wrap{inset:0 0 45% 0}
+.character-image{padding-top:12px;object-position:center bottom}
+.card-copy{min-height:45%;padding:24px 24px 28px}
+.speaker-role{font-size:.82rem;line-height:1.35;margin-bottom:5px}
+.speaker-name{font-size:1.62rem;line-height:1.18;margin-bottom:11px}
+.card-title{font-size:1.12rem;line-height:1.35;margin-bottom:11px}
+.card-text{font-size:1rem;line-height:1.8;color:#efe6d1;word-break:keep-all;text-wrap:pretty}
+.choice-overlay{position:absolute;z-index:5;top:26%;width:43%;max-width:172px;min-height:108px;padding:14px 14px 16px;border-radius:18px;background:rgba(13,9,7,.96);border:1px solid rgba(214,189,122,.34);font-size:.96rem;line-height:1.55;opacity:0;pointer-events:none;transition:opacity .12s, transform .12s;box-shadow:0 18px 40px rgba(0,0,0,.34);display:flex;flex-direction:column;justify-content:center;text-wrap:pretty;word-break:keep-all}
+.choice-overlay .choice-kicker{display:block;margin-bottom:7px;font-size:.72rem;font-weight:900;letter-spacing:.08em;color:#e2bd77}
+.choice-overlay strong{display:block;font-size:1.02rem;line-height:1.55;font-weight:900;color:#f5e8c8}
+.choice-left{left:4px;text-align:left;transform:translateX(-6px)}
+.choice-right{right:4px;text-align:right;transform:translateX(6px)}
+.choice-overlay[style*="opacity: 1"], .choice-overlay[style*="opacity:1"]{transform:translateX(0)}
+.swipe-hint,.tap-actions{display:none!important}
+@media(max-height:760px){
+  .card-stage{height:clamp(450px,58dvh,570px)!important}
+  .game-screen.card-standard .card-stage{height:clamp(490px,64dvh,620px)!important}
+  .game-screen.card-long .card-stage{height:clamp(540px,69dvh,680px)!important}
+  .speaker-name{font-size:1.46rem}.card-text{font-size:.94rem;line-height:1.72}.choice-overlay{min-height:94px;font-size:.88rem}
+}
+
+
+
+/* v1.1: continued polish — stronger result contrast, better banner wrapping, calmer swipe sensitivity */
+.event-banner{word-break:keep-all;text-wrap:pretty}
+.event-banner .event-body{display:grid;gap:4px}
+.event-banner .event-line{display:block}
+.event-banner.banner-legacy{border-width:1.5px;box-shadow:0 0 0 1px rgba(255,164,71,.08), 0 10px 28px rgba(67,31,10,.18)}
+.event-banner.banner-followup{border-width:1.5px;box-shadow:0 0 0 1px rgba(126,171,241,.07), 0 10px 28px rgba(18,27,43,.18)}
+.event-banner.banner-audience{border-width:1.5px;box-shadow:0 0 0 1px rgba(214,189,122,.08), 0 10px 28px rgba(42,28,11,.16)}
+.event-banner.banner-crisis{border-width:1.5px;box-shadow:0 0 0 1px rgba(214,111,96,.08), 0 10px 28px rgba(60,16,14,.18)}
+.choice-overlay{top:28%;width:44%;max-width:180px;min-height:116px;font-size:1rem}
+.choice-overlay .choice-kicker{font-size:.74rem}
+.choice-overlay strong{font-size:1.06rem;line-height:1.58}
+.choice-left{left:-4px}
+.choice-right{right:-4px}
+.decision-card{transform-origin:50% 92%}
+.history-compare{border-width:1.5px!important;box-shadow:0 12px 28px rgba(0,0,0,.16), inset 0 1px rgba(255,255,255,.03)}
+.history-compare .section-title-row h3{font-size:1.08rem;letter-spacing:.01em}
+.history-compare #similarityPercent{font-size:1.56rem;font-weight:900;background:linear-gradient(180deg,rgba(240,214,136,.12),rgba(255,255,255,.02));box-shadow:inset 0 1px rgba(255,255,255,.03)}
+.history-row{padding:10px 10px;border-width:1.5px;font-size:.77rem}
+.history-row.match{border-color:rgba(90,208,120,.44);background:linear-gradient(180deg,rgba(47,120,69,.17),rgba(22,53,31,.10))}
+.history-row.diff{border-color:rgba(226,115,96,.40);background:linear-gradient(180deg,rgba(129,50,42,.18),rgba(67,24,21,.10))}
+.history-row.pending{border-color:rgba(214,189,122,.16);background:rgba(255,255,255,.025)}
+.history-row .history-label{font-weight:800;color:#eaddbe}
+.history-row.match .history-label{color:#ddf5e2}
+.history-row.diff .history-label{color:#ffd8d1}
+.history-row .louis-history{font-weight:800;color:#d9c89e}
+.history-row.match .player-history{color:#97efad}
+.history-row.diff .player-history{color:#ffaca0}
+.history-state{min-width:58px;padding:5px 7px;border:1px solid rgba(255,255,255,.08);font-size:.7rem;letter-spacing:.01em}
+.history-row.match .history-state{background:rgba(100,212,127,.16);border-color:rgba(100,212,127,.28);color:#b8f4c7}
+.history-row.diff .history-state{background:rgba(230,117,98,.14);border-color:rgba(230,117,98,.26);color:#ffc1b7}
+.history-row.pending .history-state{background:rgba(255,255,255,.03);color:#b8aa87}
+@media(max-height:760px){
+  .choice-overlay{top:29%;min-height:100px;font-size:.92rem}
+  .history-row{font-size:.74rem}
+}
+
+
+
+/* v1.2: audience-only polish — larger type, clearer hierarchy, safer spacing */
+.audience-screen{padding:18px 18px calc(26px + env(safe-area-inset-bottom));overflow-y:auto;overflow-x:hidden}
+.audience-heading{padding:14px 4px 12px}
+.audience-heading .eyebrow{font-size:.86rem;letter-spacing:.16em}
+.audience-heading h2{font-size:2.28rem;margin:7px 0 14px}
+.audience-intro{display:grid;gap:4px!important;margin:0 auto!important;max-width:360px;color:#d0bd94!important;font-size:1rem!important;line-height:1.55!important;font-weight:750;word-break:keep-all}
+.audience-intro span{display:block}
+.audience-stat-wrap{margin:10px 0 16px;padding:9px 10px 8px;border:1px solid rgba(214,189,122,.16);border-radius:16px;background:linear-gradient(180deg,rgba(188,163,106,.045),rgba(0,0,0,.08))}
+.audience-stat-title{text-align:center;color:#a99770;font-size:.68rem;font-weight:900;letter-spacing:.10em;margin:1px 0 2px}
+.audience-stat-wrap .stat-bar{height:78px;padding-top:1px}
+.audience-stat-wrap .stat-item{padding-top:9px}
+.audience-stat-wrap .stat-icon{width:29px;height:29px}
+.audience-stat-wrap .stat-track{width:70%;height:4px;margin-top:6px}
+.audience-stat-wrap .stat-label{font-size:.65rem;margin-top:6px;color:#a9956d}
+.audience-grid{gap:13px;margin-top:4px}
+.audience-person{grid-template-columns:88px minmax(0,1fr);gap:15px;min-height:122px;padding:12px 14px 12px 12px;border-radius:19px;background:linear-gradient(135deg,rgba(188,163,106,.045),rgba(255,255,255,.012));box-shadow:inset 0 1px rgba(255,255,255,.02)}
+.audience-person:hover{transform:translateY(-1px);border-color:rgba(214,189,122,.48);background:linear-gradient(135deg,rgba(188,163,106,.09),rgba(255,255,255,.02))}
+.audience-person:active{transform:scale(.992);border-color:rgba(222,196,127,.62)}
+.audience-portrait{width:88px;height:104px;border-radius:14px;background:#1b120d;border:1px solid rgba(214,189,122,.10)}
+.audience-portrait img{object-position:center bottom}
+.audience-copy{min-width:0;padding:2px 0}
+.audience-copy small{display:block;color:#d5b96f;font-size:.76rem;line-height:1.35;font-weight:900;letter-spacing:.015em}
+.audience-copy h3{margin:5px 0 7px;font-size:1.18rem;line-height:1.2;color:#f5ead2}
+.audience-copy p{margin:0;color:#cfbf9d;font-size:.88rem;line-height:1.52;font-weight:650;word-break:keep-all;text-wrap:pretty}
+.audience-warning{display:grid;gap:4px;margin:17px auto 0;padding:11px 13px;max-width:370px;border:1px solid rgba(214,189,122,.16);border-radius:13px;background:rgba(0,0,0,.12);text-align:center;font-size:.76rem;line-height:1.5;color:#958565;word-break:keep-all}
+.audience-warning strong{color:#cbb27a;font-size:.78rem}
+.audience-warning span{display:block}
+@media(max-height:760px){
+  .audience-screen{padding-top:12px}.audience-heading{padding:7px 4px 8px}.audience-heading h2{font-size:1.95rem;margin:5px 0 9px}.audience-intro{font-size:.88rem!important;gap:2px!important}
+  .audience-stat-wrap{margin:6px 0 10px;padding:5px 8px 4px}.audience-stat-title{font-size:.62rem}.audience-stat-wrap .stat-bar{height:66px}.audience-stat-wrap .stat-item{padding-top:5px}.audience-stat-wrap .stat-icon{width:25px;height:25px}.audience-stat-wrap .stat-label{font-size:.58rem;margin-top:4px}
+  .audience-grid{gap:9px}.audience-person{grid-template-columns:72px minmax(0,1fr);min-height:98px;padding:9px 11px}.audience-portrait{width:72px;height:84px}.audience-copy small{font-size:.67rem}.audience-copy h3{font-size:1.02rem;margin:3px 0 5px}.audience-copy p{font-size:.76rem;line-height:1.4}.audience-warning{margin-top:11px;padding:8px 10px;font-size:.68rem}
+}
+
+
+
+/* v0.15: fit game board inside viewport without page scrolling */
+.game-screen.screen-active{display:flex;flex-direction:column;overflow:hidden}
+.game-screen .game-topbar{flex:0 0 46px}
+.game-screen>.stat-bar{flex:0 0 92px;height:92px;padding-top:6px}
+.game-screen>.unrest-hint{flex:0 0 auto;margin:0 0 3px;min-height:26px}
+.game-screen>.event-banner{flex:0 0 auto;margin:4px 2px 8px}
+.game-screen>.card-stage{flex:1 1 auto;height:auto!important;min-height:0!important;max-height:none!important;margin-top:2px;padding:7px 0 3px}
+.game-screen.card-compact>.card-stage,.game-screen.card-standard>.card-stage,.game-screen.card-long>.card-stage,
+.game-screen.followup-result.card-compact>.card-stage,.game-screen.followup-result.card-standard>.card-stage,.game-screen.followup-result.card-long>.card-stage{height:auto!important;min-height:0!important;max-height:none!important}
+.game-screen .decision-card{height:100%;min-height:0;max-height:none}
+.game-screen.card-standard .portrait-wrap{inset:0 0 47% 0}
+.game-screen.card-standard .card-copy{min-height:47%}
+.game-screen.card-long .portrait-wrap{inset:0 0 53% 0}
+.game-screen.card-long .card-copy{min-height:53%;padding:21px 22px 23px}
+.game-screen.card-long .speaker-name{font-size:1.48rem;margin-bottom:8px}
+.game-screen.card-long .card-title{font-size:1.04rem;margin-bottom:8px}
+.game-screen.card-long .card-text{font-size:.94rem;line-height:1.68}
+@media(max-height:760px){
+  .game-screen{padding-top:10px;padding-bottom:calc(10px + env(safe-area-inset-bottom))}
+  .game-screen .game-topbar{flex-basis:40px;height:40px}
+  .game-screen>.stat-bar{flex-basis:82px;height:82px;padding-top:2px}
+  .game-screen>.stat-bar .stat-item{padding-top:20px}
+  .game-screen>.unrest-hint{font-size:.78rem;min-height:23px;line-height:1.35}
+  .game-screen>.event-banner{padding:9px 11px;margin:3px 2px 6px;font-size:.80rem;line-height:1.45}
+  .game-screen>.card-stage{padding-top:4px}
+  .game-screen .portrait-wrap{inset:0 0 50% 0}
+  .game-screen .card-copy{min-height:50%;padding:18px 19px 20px}
+  .game-screen.card-long .portrait-wrap{inset:0 0 57% 0}
+  .game-screen.card-long .card-copy{min-height:57%;padding:16px 18px 18px}
+  .game-screen.card-long .speaker-role{font-size:.74rem}
+  .game-screen.card-long .speaker-name{font-size:1.30rem;margin-bottom:6px}
+  .game-screen.card-long .card-title{font-size:.96rem;margin-bottom:6px}
+  .game-screen.card-long .card-text{font-size:.86rem;line-height:1.56}
+  .choice-overlay{top:27%;min-height:92px}
+}
+@media(max-height:680px){
+  .game-screen>.stat-bar{flex-basis:76px;height:76px}
+  .game-screen>.stat-bar .stat-item{padding-top:16px}
+  .game-screen>.stat-bar .stat-icon{width:26px;height:26px}
+  .game-screen>.unrest-hint{font-size:.73rem;min-height:21px}
+  .game-screen .card-copy{padding:15px 17px 16px}
+  .game-screen .speaker-name{font-size:1.30rem;margin-bottom:6px}
+  .game-screen .card-title{font-size:.94rem;margin-bottom:6px}
+  .game-screen .card-text{font-size:.84rem;line-height:1.52}
+  .game-screen.card-long .card-text{font-size:.80rem;line-height:1.48}
+}
+
+</style>
+</head>
+<body>
+  <div class="desktop-shell">
+    <main id="app" class="app-shell" aria-live="polite">
+      <section id="loginScreen" class="screen screen-active login-screen">
+        <header class="login-masthead">
+          <img class="title-art" src="assets/ui/game_title.png" alt="짐이 곧 국가다" />
+        </header>
+
+        <section class="login-card">
+          <div class="login-card-head">
+            <div>
+              <h2>통치자 로그인</h2>
+            </div>
+          </div>
+          <form id="loginForm" class="login-form" autocomplete="off">
+            <div class="login-row-two">
+              <label>학번
+                <input id="studentNo" inputmode="numeric" maxlength="6" placeholder="2999" required />
+              </label>
+              <label>이름
+                <input id="studentName" maxlength="20" placeholder="홍길동" required />
+              </label>
+            </div>
+            <label>4자리 PIN
+              <input id="studentPin" type="password" inputmode="numeric" pattern="\d{4}" maxlength="4" placeholder="● ● ● ●" required />
+            </label>
+            <button class="primary-btn login-submit" type="submit">입궁하기</button>
+          </form>
+          <p id="loginMessage" class="form-message"></p>
+        </section>
+
+        <section class="public-ranking-panel">
+          <div class="public-ranking-heading">
+            <div>
+              <h2>랭킹</h2>
+            </div>
+            <span class="rank-live-badge">TOP 10</span>
+          </div>
+          <div class="ranking-switch login-ranking-switch" role="tablist" aria-label="로그인 화면 랭킹 종류">
+            <button class="ranking-switch-btn login-ranking-tab active" data-mode="best" type="button">최고 기록</button>
+            <button class="ranking-switch-btn login-ranking-tab" data-mode="total" type="button">누적 점수</button>
+          </div>
+          <div id="loginRankingList" class="ranking-list public-ranking-list"></div>
+        </section>
+
+        <p class="tiny-note login-note"><span>PIN은 수업용 간이 인증입니다.</span><span>다른 서비스에서 사용하는 비밀번호는 입력하지 마세요.</span></p>
+      </section>
+
+      <section id="homeScreen" class="screen home-screen">
+        <header class="home-header">
+          <div>
+            <p class="eyebrow">어서 오십시오</p>
+            <h2 id="profileName">2999 홍길동</h2>
+          </div>
+          <button id="logoutBtn" class="icon-btn text-btn">나가기</button>
+        </header>
+
+        <div class="home-command-card">
+          <div class="home-command-top">
+            <div class="sun-medallion small"><img src="assets/ui/louis_xiv_icon.png" alt="루이 14세"></div>
+            <div>
+              <p class="eyebrow">새로운 통치</p>
+              <h3>왕국을 통치하시겠습니까?</h3>
+            </div>
+          </div>
+          <p>최대 20턴. 선택은 즉시 영향을 주기도 하고, 몇 턴 뒤 예상치 못한 결과로 돌아오기도 합니다.</p>
+          <button id="startBtn" class="primary-btn">새 통치 시작</button>
+        </div>
+
+        <div class="profile-strip">
+          <div><span>최고</span><strong id="homeBestScore">0</strong></div>
+          <div><span>누적</span><strong id="homeTotalScore">0</strong></div>
+          <div><span>플레이</span><strong id="homeRuns">0회</strong></div>
+          <div><span>완주</span><strong id="homeCompleted">0회</strong></div>
+        </div>
+
+        <button id="titleBookBtn" class="secondary-btn home-titlebook-btn">내 칭호 도감</button>
+
+        <div id="homeRankingList" class="hidden" aria-hidden="true"></div>
+      </section>
+
+      <section id="gameScreen" class="screen game-screen">
+        <header class="game-topbar">
+          <div class="turn-block">
+            <span id="yearLabel">1661년</span>
+            <strong id="turnLabel">TURN 1 / 20</strong>
+          </div>
+          <button id="quitRunBtn" class="icon-btn text-btn">통치 포기</button>
+        </header>
+
+        <div id="statBar" class="stat-bar" aria-label="국가 지표"></div>
+        <div id="unrestHint" class="unrest-hint">왕국은 안정되어 있습니다.</div>
+        <div id="eventBanner" class="event-banner hidden"></div>
+
+        <div id="cardStage" class="card-stage">
+          <div id="leftChoiceOverlay" class="choice-overlay choice-left"></div>
+          <div id="rightChoiceOverlay" class="choice-overlay choice-right"></div>
+          <article id="decisionCard" class="decision-card" tabindex="0">
+            <div class="portrait-wrap">
+              <img id="characterImage" class="character-image hidden" alt="" />
+              <div id="characterFallback" class="character-fallback" aria-hidden="true"></div>
+              <div class="portrait-vignette"></div>
+            </div>
+            <div class="card-copy">
+              <p id="speakerRole" class="speaker-role"></p>
+              <h2 id="speakerName" class="speaker-name"></h2>
+              <h3 id="cardTitle" class="card-title"></h3>
+              <p id="cardText" class="card-text"></p>
+            </div>
+          </article>
+        </div>
+
+        <div class="swipe-hint hidden" aria-hidden="true"></div>
+        <div class="tap-actions hidden" aria-hidden="true">
+          <button id="leftTapBtn" class="tap-choice left-choice"></button>
+          <button id="rightTapBtn" class="tap-choice right-choice"></button>
+        </div>
+      </section>
+
+      <section id="audienceScreen" class="screen audience-screen">
+        <div class="audience-heading">
+          <p class="eyebrow">특별 알현</p>
+          <h2 id="audienceTurnLabel">TURN 5</h2>
+          <p class="audience-intro"><span>세 사람이 국왕을 찾아왔습니다.</span><span>단 한 명만 독대할 수 있습니다.</span></p>
+        </div>
+        <div class="audience-stat-wrap" aria-label="현재 국가 지표">
+          <div class="audience-stat-title">현재 국정 상태</div>
+          <div id="audienceStatBar" class="stat-bar"></div>
+        </div>
+        <div id="audienceGrid" class="audience-grid"></div>
+        <p class="audience-warning"><strong>선택에 주의하세요.</strong><span>선택받지 못한 인물에 따라 특정 계층이 불만을 가질 수 있습니다.</span></p>
+      </section>
+
+      <section id="resultScreen" class="screen result-screen">
+        <p id="resultYear" class="eyebrow">1715</p>
+        <h2 id="resultHeadline">태양왕의 시대가 끝났다.</h2>
+        <div id="resultCause" class="result-cause hidden"></div>
+        <div class="score-orb"><strong id="resultScore">708</strong><span>점</span></div>
+        <div id="resultGrade" class="grade-badge">A</div>
+        <p id="resultScoreNote" class="result-score-note hidden"></p>
+        <h3 id="resultMainTitle" class="result-main-title">평화의 태양</h3>
+        <p id="resultSummary" class="result-summary"></p>
+        <div id="resultStats" class="result-stats"></div>
+        <div class="rank-summary">
+          <div><span>최고 기록 순위</span><strong id="resultBestRank">-</strong></div>
+          <div><span>누적 점수 순위</span><strong id="resultTotalRank">-</strong></div>
+        </div>
+        <section class="result-section">
+          <div class="section-title-row"><h3>획득 칭호</h3><span id="titleCountLabel"></span></div>
+          <div id="earnedTitles" class="title-list"></div>
+        </section>
+        <section class="result-section history-compare">
+          <div class="section-title-row"><h3>실제 루이 14세와 비교</h3><strong id="similarityPercent">0%</strong></div>
+          <p id="similarityCoverage" class="small-copy"></p>
+          <div id="historyComparison" class="history-list"></div>
+        </section>
+        <div class="result-actions">
+          <button id="playAgainBtn" class="primary-btn">다시 통치하기</button>
+          <button id="homeBtn" class="ghost-btn">로그인 화면으로</button>
+        </div>
+      </section>
+
+      <section id="titleBookScreen" class="screen titlebook-screen">
+        <header class="ranking-header">
+          <div><p class="eyebrow">수집 기록</p><h2>칭호 도감</h2></div>
+          <button id="titleBookBackBtn" class="icon-btn text-btn">돌아가기</button>
+        </header>
+        <div id="titleBookList" class="titlebook-list"></div>
+      </section>
+    </main>
+  </div>
+
+  <div id="modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal-card">
+      <p id="modalKicker" class="eyebrow">확인</p>
+      <h3 id="modalTitle"></h3>
+      <p id="modalText"></p>
+      <div id="modalActions" class="modal-actions">
+        <button id="modalCancel" class="ghost-btn" type="button">취소</button>
+        <button id="modalConfirm" class="primary-btn" type="button">확인</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+// Google Apps Script 웹앱을 연결하면 아래 URL을 넣으세요.
+// 비워두면 브라우저 localStorage만 사용하며, 한 기기 안에서만 랭킹이 공유됩니다.
+window.APP_CONFIG = {
+  SHEETS_ENDPOINT: "https://script.google.com/macros/s/AKfycbxGYEJ05uOWAEOhpwLgDqUBRcKxzCxrgPNWJzhJ5-eOktqWxypBmcDAc0YwNF3qaO25/exec"
+};
+
+</script>
+  <script>
+/*
+  짐이 곧 국가다 — 재정·군사 국가 시뮬레이터
+  총 카드 데이터 72장 = 일반 45 + 조건부 후속 15 + 특별 알현 12
+  수치는 학생 화면에 직접 공개되지 않으며, 선택 전에는 영향받는 지표와 대략적 크기만 예고됩니다.
+*/
+
+const STAT_KEYS = ["treasury", "military", "elite", "people", "food"];
+
+const STAT_META = {
+  treasury: { label: "국고", short: "국고" },
+  military: { label: "군사", short: "군사" },
+  elite: { label: "특권층 지지", short: "특권층" },
+  people: { label: "민중 지지", short: "민중" },
+  food: { label: "식량", short: "식량" },
+};
+
+const HISTORY_ITEMS = [
+  { key: "directRule", label: "국왕의 직접 통치", louis: true },
+  { key: "bureaucracy", label: "관료제 강화", louis: true },
+  { key: "standingArmy", label: "강력한 상비군", louis: true },
+  { key: "mercantilism", label: "국내 산업 보호·중상주의", louis: true },
+  { key: "overseasTrade", label: "해외 무역 확대", louis: true },
+  { key: "versailles", label: "베르사유 대규모 건설", louis: true },
+  { key: "religiousControl", label: "종교 통일 정책 강화", louis: true },
+  { key: "aggressiveWar", label: "적극적인 대외 전쟁", louis: true },
+];
+
+const BASE_CARDS = [
+  {
+    id: 1, act: 1, fixed: true, speaker: "왕실 서기관", role: "국정 보고",
+    title: "마자랭이 죽었다",
+    text: "1661년, 재상 마자랭이 세상을 떠났습니다. 신하들은 새로운 재상을 두고 국정을 맡길지, 폐하께서 직접 정치를 이끌지 묻고 있습니다.",
+    textbook: "루이 14세는 강력한 왕권을 바탕으로 절대 권력을 행사하였다.",
+    left: { label: "유력 귀족에게 국정을 맡긴다", effects: {treasury:2, elite:8, people:-2}, unrest:3, history:{directRule:false} },
+    right:{ label: "내가 직접 국정을 주재한다", effects: {treasury:-2, elite:-4, people:2}, unrest:-1, history:{directRule:true}, tagsAdd:["친정"] }
+  },
+  {
+    id: 2, act: 1, speaker: "재정 관리", role: "조세 행정",
+    title: "세금이 왕에게 오지 않는다",
+    text: "지방에서 거둔 세금의 상당 부분이 왕실 금고에 도착하기 전에 사라지고 있습니다. 징세 과정을 조사해야 한다는 보고입니다.",
+    textbook: "재정·군사 국가는 세금을 효율적으로 거두기 위해 국가 업무를 정비했다.",
+    left:{label:"정부가 징세 과정을 직접 조사한다", effects:{treasury:-6, elite:-6, people:3}, unrest:-2, schedule:[{id:46,delay:2}]},
+    right:{label:"기존 징세업자에게 계속 맡긴다", effects:{treasury:9, elite:4, people:-5}, unrest:3, schedule:[{id:47,delay:2}]}
+  },
+  {
+    id: 3, act: 1, speaker: "국무 관리", role: "관료제",
+    title: "지방에 왕의 관리가 필요하다",
+    text: "각 지방의 법과 세금 집행 방식이 제각각입니다. 왕이 임명한 관리를 보내 행정을 통일하자는 제안이 올라왔습니다.",
+    textbook: "재정·군사 국가는 국가 업무를 효율적으로 수행하기 위해 관료제를 운용하였다.",
+    left:{label:"왕이 임명한 관료를 지방에 파견한다", effects:{treasury:-6, elite:-8, people:4}, unrest:-2, tagsAdd:["관료제"], history:{bureaucracy:true}, schedule:[{id:46,delay:2}]},
+    right:{label:"지방 귀족에게 계속 맡긴다", effects:{treasury:2, elite:8, people:-2}, unrest:1, history:{bureaucracy:false}}
+  },
+  {
+    id: 4, act: 1, speaker: "군무 관리", role: "상비군",
+    title: "언제든 싸울 군대",
+    text: "전쟁이 날 때마다 병력을 모으는 방식으로는 대응이 늦습니다. 평상시에도 훈련받는 상비군을 확대하자는 제안입니다.",
+    textbook: "재정·군사 국가는 언제든 동원할 수 있는 상비군을 두어 전문적인 군사력을 유지하였다.",
+    left:{label:"전쟁 때마다 필요한 병력을 모집한다", effects:{treasury:5, military:-8, elite:4, people:2}, history:{standingArmy:false}},
+    right:{label:"국가가 상비군을 대폭 확대한다", effects:{treasury:-10, military:14, elite:-4, people:-3}, unrest:2, tagsAdd:["상비군"], history:{standingArmy:true}}
+  },
+  {
+    id: 5, act: 1, speaker: "포병 장교", role: "화약 무기",
+    title: "화약과 대포",
+    text: "이웃 국가들이 더 강력한 대포와 화약 무기를 갖추고 있습니다. 국가가 직접 군수 생산을 지원해 달라는 요청입니다.",
+    textbook: "유럽 각국은 전쟁을 수행하기 위해 화약 무기를 개발하고 군대를 육성하였다.",
+    left:{label:"지금은 재정을 아낀다", effects:{treasury:6, military:-6}},
+    right:{label:"국가가 대포 생산을 지원한다", effects:{treasury:-8, military:12, people:-1}}
+  },
+  {
+    id: 6, act: 1, speaker: "지방 대표", role: "군대 보급",
+    title: "군인들이 민가에 묵는다",
+    text: "상비군이 늘면서 병사들이 주민의 집에서 숙식하는 일이 잦아졌습니다. 주민들의 불만이 커지고 있습니다.",
+    left:{label:"주민들이 계속 숙식을 부담하게 한다", effects:{treasury:6, military:4, people:-8}, unrest:4, schedule:[{id:49,delay:2}]},
+    right:{label:"국가 비용으로 병영을 건설한다", effects:{treasury:-8, military:6, people:7}, unrest:-3}
+  },
+  {
+    id: 7, act: 1, speaker: "왕실 장교", role: "중앙집권",
+    title: "귀족들이 사병을 거느린다",
+    text: "일부 대귀족이 여전히 자신에게 충성하는 병력을 거느리고 있습니다. 군사력을 국왕에게 집중해야 한다는 주장이 나옵니다.",
+    left:{label:"귀족의 사병을 일부 인정한다", effects:{elite:9, military:-5}, unrest:2, tagsAdd:["지방귀족권한"]},
+    right:{label:"국왕의 군대로 흡수한다", effects:{military:9, elite:-10, people:2}, unrest:-1, tagsAdd:["군사중앙집권"]}
+  },
+  {
+    id: 8, act: 1, speaker: "재무 관리", role: "관직 제도",
+    title: "관직을 팔면 돈이 된다",
+    text: "왕실 재정이 필요합니다. 돈을 낸 사람에게 관직과 권리를 주면 당장 큰돈을 마련할 수 있다는 제안입니다.",
+    extra:"근세 유럽에서는 국가가 관직을 판매하여 재정을 확보하는 경우가 있었습니다. 단기 수입에는 도움이 되었지만 행정과 특권 구조에 장기적인 부담을 만들기도 했습니다.",
+    left:{label:"능력 중심으로 관리를 선발한다", effects:{treasury:-7, elite:-5, people:4}, unrest:-2, schedule:[{id:46,delay:3}]},
+    right:{label:"관직을 판매해 돈을 마련한다", effects:{treasury:13, elite:5, people:-4}, unrest:3, tagsAdd:["관직판매"], schedule:[{id:50,delay:3}]}
+  },
+  {
+    id: 9, act: 1, speaker: "회계 책임자", role: "관료제",
+    title: "장부가 모두 다르다",
+    text: "지방마다 회계 방식이 달라 왕국 전체의 수입과 지출을 한눈에 파악하기 어렵습니다.",
+    left:{label:"지방의 오랜 관행을 존중한다", effects:{treasury:-3, elite:5}, unrest:1},
+    right:{label:"전국의 회계 기준을 통일한다", effects:{treasury:-6, elite:-4, people:2}, unrest:-1, tagsAdd:["회계정비"], schedule:[{id:46,delay:2}]}
+  },
+  {
+    id:10, act:1, speaker:"파리의 금융가", role:"국가 재정",
+    title:"상인들이 돈을 빌려주겠다",
+    text:"전쟁과 행정에 당장 쓸 돈이 필요합니다. 부유한 상인과 금융가들이 국가에 돈을 빌려주겠다고 합니다.",
+    left:{label:"세금을 올려 지금 필요한 돈을 마련한다", effects:{treasury:10, people:-8}, unrest:5, schedule:[{id:48,delay:2}]},
+    right:{label:"국채를 발행해 돈을 빌린다", effects:{treasury:12, people:1}, tagsAdd:["국가부채"], schedule:[{id:51,delay:3}]}
+  },
+  {
+    id:11, act:1, speaker:"토목 관리", role:"도로·운하",
+    title:"왕국의 길이 엉망이다",
+    text:"곡물과 상품, 군대를 이동시키는 길이 좋지 않습니다. 도로와 운하에 투자하자는 건의가 올라왔습니다.",
+    left:{label:"군사비를 우선한다", effects:{treasury:-5, military:6}},
+    right:{label:"도로와 운하를 건설한다", effects:{treasury:-9, people:4, food:5}, unrest:-2, tagsAdd:["교통망"], schedule:[{id:52,delay:3}]}
+  },
+  {
+    id:12, act:1, speaker:"지방 총독", role:"조세 반발",
+    title:"세금 반대 봉기",
+    text:"일부 지방에서 새로운 세금에 반대하는 사람들이 징세소를 공격했습니다. 왕의 권위를 지켜야 한다는 목소리가 높습니다.",
+    left:{label:"세금을 일부 낮추고 요구를 듣는다", effects:{treasury:-8, elite:-2, people:10}, unrest:-6},
+    right:{label:"군대를 보내 즉시 진압한다", effects:{military:3, people:-10}, unrest:-5, tagsAdd:["강제진압"], schedule:[{id:53,delay:3}]}
+  },
+
+  { id:13, act:2, speaker:"직물 상인", role:"보호 무역", title:"값싼 외국 직물", text:"네덜란드와 영국의 값싼 직물이 프랑스 시장에 들어와 국내 생산자들이 어려움을 호소합니다.", textbook:"중상주의 국가는 수입을 억제하고 국내 상공업을 보호하였다.", left:{label:"수입을 자유롭게 허용한다",effects:{treasury:1,people:5},unrest:-1}, right:{label:"외국 직물에 높은 관세를 매긴다",effects:{treasury:7,people:-2},unrest:1,tagsAdd:["보호관세"],schedule:[{id:54,delay:3}] } },
+  { id:14, act:2, speaker:"콜베르의 실무관", role:"제조업", title:"프랑스산 고급품", text:"외국에서 사 오던 직물과 유리, 사치품을 프랑스 안에서 생산하도록 왕실이 제조업을 지원하자는 제안입니다.", textbook:"재정·군사 국가는 상공업을 보호하고 수출을 장려하는 중상주의 정책을 시행하였다.", left:{label:"시장에 맡기고 정부 지출을 줄인다",effects:{treasury:4,people:-2},history:{mercantilism:false}}, right:{label:"왕립 제조업을 적극 지원한다",effects:{treasury:-9,people:5},tagsAdd:["중상주의","왕립제조업"],history:{mercantilism:true},schedule:[{id:55,delay:3}]} },
+  { id:15, act:2, speaker:"기술 관리", role:"산업 육성", title:"외국 기술자를 데려오자", text:"새로운 제조 기술을 가진 숙련공을 외국에서 데려오면 프랑스 상품의 품질을 높일 수 있습니다.", left:{label:"국내 기술자만 보호한다",effects:{treasury:2,elite:2,people:1}}, right:{label:"외국 숙련공을 적극 유치한다",effects:{treasury:-5,elite:-2,people:4},unrest:-1,tagsAdd:["기술유치"]} },
+  { id:16, act:2, speaker:"수출 상인", role:"수출 장려", title:"수출하면 세금을 깎아주십시오", text:"프랑스 상품을 해외에 더 많이 팔 수 있도록 수출 상인에게 지원을 달라는 청원이 올라왔습니다.", left:{label:"특혜 없이 세금을 그대로 걷는다",effects:{treasury:4}}, right:{label:"수출 상인을 지원한다",effects:{treasury:-6,people:2},tagsAdd:["수출장려"],schedule:[{id:55,delay:3}]} },
+  { id:17, act:2, speaker:"대상인 조합", role:"독점 무역", title:"우리에게 독점권을 주십시오", text:"상인 조합이 특정 지역의 무역을 자신들만 맡게 해주면 왕실에 큰돈을 바치겠다고 제안합니다.", textbook:"일부 특권 상인에게 무역 독점권을 주고 그 대가로 헌금과 세금을 받기도 했다.", left:{label:"여러 상인이 자유롭게 경쟁하게 한다",effects:{treasury:4,elite:-4,people:5},unrest:-1}, right:{label:"독점권을 주고 재정을 확보한다",effects:{treasury:11,elite:6,people:-4},unrest:2,tagsAdd:["특권상인"],schedule:[{id:56,delay:3}]} },
+  { id:18, act:2, speaker:"해외 무역 관리", role:"동인도회사", title:"아시아 무역 회사", text:"아시아와 장거리 무역을 하기 위해 국가가 동인도회사를 지원하자는 제안입니다.", textbook:"영국과 프랑스는 동인도 회사를 통해 아시아에 무역 거점을 만들고 독점적인 무역을 하였다.", extra:"동인도회사는 유럽 국가들이 아시아 무역을 위해 만든 회사입니다. 일부 회사는 국가의 허가를 받아 특정 지역의 무역을 독점하고 요새나 군대를 운영하기도 했습니다.", left:{label:"민간 상인에게 맡긴다",effects:{treasury:3,people:2},history:{overseasTrade:false}}, right:{label:"국가가 동인도회사를 지원한다",effects:{treasury:-10,military:4},tagsAdd:["동인도회사","해외무역"],history:{overseasTrade:true},schedule:[{id:57,delay:3}]} },
+  { id:19, act:2, speaker:"해외 담당관", role:"해외 시장", title:"해외 무역 거점", text:"원료를 확보하고 프랑스 상품을 판매하려면 먼 지역에 항구와 무역 거점이 필요하다는 보고가 올라왔습니다.", textbook:"재정·군사 국가는 원료와 상품 판매 시장을 얻기 위해 식민지 확보에 나섰다.", left:{label:"유럽 안의 시장에 집중한다",effects:{treasury:5,military:-2}}, right:{label:"해외 거점 확보에 투자한다",effects:{treasury:-10,military:8,people:-2},unrest:1,tagsAdd:["해외팽창"]} },
+  { id:20, act:2, speaker:"해군 장교", role:"해군", title:"상선을 누가 지킬까", text:"장거리 무역선이 해적과 적국 함선의 위협을 받고 있습니다. 해군을 확대하자는 요구입니다.", left:{label:"필요한 호위함만 운영한다",effects:{treasury:-5,military:6,people:3},unrest:-1}, right:{label:"대규모 해군을 건설한다",effects:{treasury:-12,military:13,people:-2},tagsAdd:["해군"]} },
+  { id:21, act:2, speaker:"도시 상공업자", role:"시민 계층", title:"상공업자와 거래", text:"상공업자들은 사업 활동을 보호해 준다면 왕실에 정기적으로 재정 지원을 제공하겠다고 합니다.", textbook:"국가는 상공업과 무역에 종사하는 시민 계층을 보호하고 그들로부터 재정 지원을 받았다.", left:{label:"큰돈을 한 번에 강제로 징수한다",effects:{treasury:14,people:-8},unrest:4}, right:{label:"사업을 보호하고 정기 지원을 받는다",effects:{treasury:10,elite:-3,people:5},unrest:-1,tagsAdd:["시민협력"]} },
+  { id:22, act:2, speaker:"제조업자", role:"원료 확보", title:"원료가 부족하다", text:"왕립 제조업이 성장하면서 목재와 염료, 섬유 등 원료 수요가 크게 늘었습니다.", left:{label:"국내에서 대체 원료를 개발한다",effects:{treasury:-5,people:4,food:2},unrest:-1}, right:{label:"해외 원료 공급망을 확대한다",effects:{treasury:-8,military:5,people:-2},unrest:1,tagsAdd:["해외원료"]} },
+  { id:23, act:2, speaker:"곡물 상인", role:"식량·무역", title:"풍년이다", text:"올해 곡물이 많이 생산되었습니다. 상인들은 높은 가격을 받을 수 있는 해외로 곡물을 수출하게 해달라고 요청합니다.", left:{label:"국내에 곡물을 충분히 비축한다",effects:{treasury:-2,people:4,food:12},unrest:-2,tagsAdd:["곡물비축"]}, right:{label:"해외 수출을 허용한다",effects:{treasury:9,people:-4,food:-10},unrest:2,tagsAdd:["낮은비축"]} },
+
+  { id:24, act:3, speaker:"외교관", role:"대외 팽창", title:"새 영토를 차지할 기회", text:"이웃 지역의 분쟁을 이용하면 프랑스의 국경을 넓힐 수 있다는 보고입니다. 다만 전쟁비가 필요합니다.", left:{label:"외교와 협상으로 영향력을 넓힌다",effects:{treasury:-4,military:-2,elite:-3,people:3},unrest:-1}, right:{label:"군대를 움직여 영토를 차지한다",effects:{treasury:-12,military:8,elite:6,people:-4},unrest:2,tagsAdd:["공격전쟁"],schedule:[{id:60,delay:2}]} },
+  { id:25, act:3, speaker:"외교 사절", role:"국제 관계", title:"이웃 국가들이 프랑스를 경계한다", text:"프랑스의 군사력과 무역 확대를 두려워한 여러 나라가 서로 가까워지고 있습니다.", left:{label:"관계를 개선하고 긴장을 낮춘다",effects:{treasury:-5,military:-2,people:4},unrest:-2}, right:{label:"더 강한 군대로 압박한다",effects:{treasury:-10,military:11,elite:3,people:-3},unrest:2,tagsAdd:["군비경쟁"]} },
+  { id:26, act:3, speaker:"전선 지휘관", role:"장기 전쟁", title:"전쟁이 끝나지 않는다", text:"처음 예상과 달리 적군이 버티고 있습니다. 전쟁비와 군량 소비가 계속 늘어납니다.", left:{label:"평화 협상을 시작한다",effects:{treasury:5,military:-5,elite:-6,people:8,food:4},unrest:-4}, right:{label:"승리할 때까지 계속 싸운다",effects:{treasury:-13,military:6,elite:4,people:-7,food:-5},unrest:5,tagsAdd:["전쟁피로"],schedule:[{id:60,delay:2}]} },
+  { id:27, act:3, speaker:"군 회계관", role:"군대 급료", title:"병사 급료가 밀렸다", text:"국고 사정이 나빠져 일부 부대의 급료가 늦어지고 있습니다. 군의 사기가 흔들리고 있습니다.", left:{label:"지급을 더 미룬다",effects:{treasury:4,military:-9},unrest:3,tagsAdd:["급료연기"]}, right:{label:"다른 지출을 줄여 급료를 지급한다",effects:{treasury:-10,military:9,people:2},unrest:-1} },
+  { id:28, act:3, speaker:"군량 관리", role:"군량", title:"군량이 부족하다", text:"전선으로 보낼 식량이 부족합니다. 군대는 농촌에서 곡물을 징발하자고 요구합니다.", left:{label:"시장에서 곡물을 구매한다",effects:{treasury:-10,military:4,people:4},unrest:-2}, right:{label:"농촌에서 군량을 징발한다",effects:{treasury:6,military:6,people:-10,food:-8},unrest:6,tagsAdd:["농촌피해"]} },
+  { id:29, act:3, speaker:"포병 책임자", role:"군수 산업", title:"더 강력한 대포", text:"새로운 공성전에 대비하려면 더 많은 대포와 화약이 필요합니다.", left:{label:"현재 무기로 버틴다",effects:{treasury:5,military:-5}}, right:{label:"군수 산업에 추가 투자한다",effects:{treasury:-9,military:11,people:-1},unrest:1} },
+  { id:30, act:3, speaker:"공성 기술자", role:"요새전", title:"적의 요새 도시", text:"진격로에 강력한 요새가 버티고 있습니다. 공격하면 비용이 크지만 우회하면 체면이 손상될 수 있습니다.", left:{label:"우회하고 협상을 시도한다",effects:{treasury:-3,military:-4,people:1},unrest:-1}, right:{label:"장기 포위전을 벌인다",effects:{treasury:-9,military:7,people:-3},unrest:1,tagsAdd:["공성전"]} },
+  { id:31, act:3, speaker:"전쟁 영웅", role:"포상", title:"전쟁 영웅에게 보상을", text:"승리를 거둔 장교와 귀족들이 보상을 요구합니다. 어떤 방식으로 보답하시겠습니까?", left:{label:"현금으로 포상한다",effects:{treasury:-8,military:6,elite:-2}}, right:{label:"새로운 특권을 부여한다",effects:{treasury:-3,military:4,elite:10,people:-3},unrest:1,tagsAdd:["특권확대"]} },
+  { id:32, act:3, speaker:"파리 시장", role:"민생", title:"흉작으로 빵값이 오른다", text:"곡물 수확이 줄어 빵값이 빠르게 오르고 있습니다. 파리의 주민들이 불안해하고 있습니다.", left:{label:"군량과 시장 가격을 우선한다",effects:{treasury:3,people:-12,food:-8},unrest:8}, right:{label:"왕실 곡물창고를 열어 공급한다",effects:{treasury:-8,people:10,food:14},unrest:-7} },
+  { id:33, act:3, speaker:"감찰관", role:"부패", title:"세금을 빼돌린 관리", text:"한 지방 관리가 세금 일부를 빼돌려 재산을 늘렸다는 증거가 발견되었습니다.", left:{label:"조용히 덮고 충성을 확보한다",effects:{treasury:5,elite:6,people:-6},unrest:4}, right:{label:"공개 조사하고 처벌한다",effects:{treasury:-5,elite:-7,people:8},unrest:-4,schedule:[{id:46,delay:2}]} },
+  { id:34, act:3, speaker:"왕실 건축가", role:"왕권 과시", title:"베르사유", text:"왕의 권위를 온 유럽에 보여 줄 거대한 궁전을 만들자는 계획입니다. 귀족들을 왕 가까이에 머물게 하는 효과도 기대됩니다.", textbook:"루이 14세는 베르사유 궁전을 지어 자신의 권위를 과시하였다.", left:{label:"규모를 줄이고 재정을 아낀다",effects:{treasury:6,elite:-8,people:2},unrest:-1,history:{versailles:false}}, right:{label:"거대한 베르사유 궁전을 건설한다",effects:{treasury:-16,elite:15,people:-6},unrest:3,tagsAdd:["베르사유"],history:{versailles:true},schedule:[{id:58,delay:3}]} },
+
+  { id:35, act:4, speaker:"고위 성직자", role:"종교 정책", title:"신교도들의 예배를 허용할까?", text:"프랑스에는 구교뿐 아니라 신교를 믿는 사람들도 살고 있습니다. 일부 신하들은 종교를 하나로 통일해야 왕권이 강해진다고 주장합니다.", extra:"낭트 칙령은 1598년 프랑스에서 신교도인 위그노에게 일정한 종교의 자유를 인정한 조치입니다. 루이 14세는 1685년 이를 폐지하고 신교를 강하게 통제했습니다.", left:{label:"신교도의 종교 활동을 계속 허용한다",effects:{treasury:3,elite:-8,people:7},unrest:-3,history:{religiousControl:false}}, right:{label:"종교 통일을 강하게 추진한다",effects:{treasury:-3,elite:10,people:-8},unrest:6,tagsAdd:["종교통제"],history:{religiousControl:true},schedule:[{id:59,delay:3}]} },
+  { id:36, act:4, speaker:"세제 개혁관", role:"특권 과세", title:"귀족도 세금을 내야 하지 않나?", text:"재정난이 심해졌습니다. 지금까지 세금 부담이 적었던 특권층에게도 더 많은 세금을 요구하자는 주장이 나옵니다.", left:{label:"기존의 특권을 유지한다",effects:{treasury:3,elite:9,people:-6},unrest:4}, right:{label:"특권층에도 세금을 확대한다",effects:{treasury:14,elite:-15,people:8},unrest:-6,tagsAdd:["특권층과세"]} },
+  { id:37, act:4, speaker:"궁정 관리", role:"궁정 비용", title:"궁정 연금을 줄일까?", text:"왕실이 귀족들에게 지급하는 연금과 궁정 비용이 국고를 압박하고 있습니다.", left:{label:"귀족 연금과 궁정비를 유지한다",effects:{treasury:-8,elite:10},unrest:1}, right:{label:"연금과 궁정비를 삭감한다",effects:{treasury:10,elite:-12,people:3},unrest:-2} },
+  { id:38, act:4, speaker:"왕실 외교관", role:"에스파냐 왕위", title:"에스파냐 왕위가 비었다", text:"에스파냐 왕가의 후계 문제가 발생했습니다. 폐하의 손자가 왕위를 계승하면 부르봉 왕가의 영향력이 크게 확대될 수 있지만 유럽 각국이 반발할 것입니다.", extra:"1700년 에스파냐 왕위 계승 문제를 둘러싸고 유럽의 여러 나라가 충돌했고, 장기간의 에스파냐 왕위 계승 전쟁으로 이어졌습니다.", left:{label:"계승권을 포기해 대규모 전쟁을 피한다",effects:{treasury:6,elite:-8,people:3},unrest:-2,history:{aggressiveWar:false}}, right:{label:"손자의 왕위 계승을 받아들인다",effects:{treasury:-8,military:4,elite:8},unrest:2,tagsAdd:["왕위계승전쟁"],history:{aggressiveWar:true},schedule:[{id:60,delay:2}]} },
+  { id:39, act:4, speaker:"외교 사절", role:"대프랑스 동맹", title:"여러 나라가 프랑스에 맞서 동맹했다", text:"프랑스의 팽창을 막기 위해 여러 유럽 국가가 손을 잡았습니다. 전쟁은 이전보다 훨씬 비싸질 것입니다.", left:{label:"협상하고 일부 요구를 양보한다",effects:{treasury:2,military:-6,elite:-5,people:7,food:3},unrest:-3}, right:{label:"동맹 전체와 맞서 싸운다",effects:{treasury:-14,military:9,elite:5,people:-6,food:-4},unrest:5,tagsAdd:["대규모전쟁"],schedule:[{id:60,delay:2}]} },
+  { id:40, act:4, speaker:"재무 책임자", role:"국가 부채", title:"국가 부채가 위험하다", text:"기존 빚의 이자까지 새로운 재정 부담이 되고 있습니다. 또 빌릴지, 세금을 더 거둘지 결정해야 합니다.", left:{label:"긴급 세금을 더 걷는다",effects:{treasury:12,people:-10},unrest:6,schedule:[{id:48,delay:2}]}, right:{label:"새 국채로 당장의 위기를 넘긴다",effects:{treasury:15},unrest:1,tagsAdd:["국가부채"],schedule:[{id:51,delay:3}]} },
+  { id:41, act:4, speaker:"재무 관리", role:"관직 판매", title:"관직을 더 팔자", text:"재정 부족을 해결하기 위해 새로운 관직과 특권을 판매하자는 제안이 다시 올라왔습니다.", left:{label:"정부 지출부터 줄인다",effects:{treasury:6,military:-4,elite:-6,people:3},unrest:-2}, right:{label:"관직과 특권을 판매한다",effects:{treasury:14,elite:4,people:-5},unrest:4,tagsAdd:["관직판매"],schedule:[{id:50,delay:3}]} },
+  { id:42, act:4, speaker:"왕실 집사", role:"전쟁 재정", title:"왕실의 은식기를 녹일까?", text:"전쟁비를 마련하기 위해 왕실의 값비싼 은제품까지 처분하자는 제안입니다. 왕의 위신에도 영향을 줄 수 있습니다.", extra:"루이 14세 말기의 전쟁비 부담이 커지자 왕실의 은제품을 녹여 재정을 마련하는 조치가 실제로 시행되기도 했습니다.", left:{label:"백성에게 새로운 세금을 걷는다",effects:{treasury:12,people:-10},unrest:5}, right:{label:"왕실 재산을 먼저 희생한다",effects:{treasury:10,elite:-4,people:4},unrest:-2} },
+  { id:43, act:4, speaker:"구휼 관리", role:"대기근", title:"혹독한 겨울", text:"매서운 추위와 흉작으로 곡물 생산이 크게 줄었습니다. 곳곳에서 먹을 것을 요구하는 사람들이 늘고 있습니다.", left:{label:"군대의 군량을 먼저 확보한다",effects:{military:6,people:-15,food:-10},unrest:10}, right:{label:"국가가 대규모 구휼에 나선다",effects:{treasury:-14,people:14,food:18},unrest:-10} },
+  { id:44, act:4, speaker:"군사 재판관", role:"탈영", title:"탈영병이 늘어난다", text:"긴 전쟁과 밀린 급료로 군대를 떠나는 병사가 늘고 있습니다.", left:{label:"강력한 처벌로 기강을 잡는다",effects:{military:4,people:-5},unrest:5}, right:{label:"급료와 보급을 개선한다",effects:{treasury:-10,military:12,people:1},unrest:-1} },
+  { id:45, act:4, speaker:"평화 협상단", role:"종전", title:"영토를 포기하면 평화를 얻는다", text:"적국은 일부 요구와 영토를 포기한다면 긴 전쟁을 끝낼 수 있다고 제안합니다.", left:{label:"마지막 공세로 승리를 노린다",effects:{treasury:-15,military:12,elite:7,people:-8,food:-6},unrest:6,tagsAdd:["전쟁피로"]}, right:{label:"일부 양보하고 평화를 맺는다",effects:{treasury:10,military:-5,elite:-6,people:10,food:6},unrest:-7,tagsAdd:["평화협상"]} }
+];
+
+const FOLLOWUP_CARDS = [
+  {id:46,type:"followup",speaker:"왕실 감사관",role:"과거의 선택",title:"관료제가 효과를 내다",text:"정비된 행정과 회계 덕분에 세금 누수가 줄고 국가 업무가 조금 더 안정되었습니다.",auto:{effects:{treasury:8,people:2},unrest:-1}},
+  {id:47,type:"followup",speaker:"지방 주민",role:"과거의 선택",title:"징세업자의 횡포",text:"세금을 대신 걷는 업자들이 정해진 액수 이상을 요구한다는 불만이 쏟아집니다.",left:{label:"기존 징세업자를 보호한다",effects:{treasury:5,elite:3,people:-6},unrest:4},right:{label:"조사하고 과도한 징수를 처벌한다",effects:{treasury:-4,elite:-5,people:7},unrest:-5}},
+  {id:48,type:"followup",speaker:"농민 대표",role:"과거의 선택",title:"세금을 못 내겠습니다",text:"늘어난 세금을 감당하지 못한 사람들이 납부를 거부하고 있습니다.",left:{label:"세금을 일부 되돌린다",effects:{treasury:-8,people:9},unrest:-6},right:{label:"군대를 보내 세금을 걷는다",effects:{military:3,people:-8},unrest:4,tagsAdd:["강제진압"]}},
+  {id:49,type:"followup",speaker:"지방 판사",role:"과거의 선택",title:"병사와 주민의 충돌",text:"민가에 머문 병사들과 주민 사이의 다툼이 폭력 사태로 번졌습니다.",left:{label:"군대의 행동을 두둔한다",effects:{military:4,people:-7},unrest:4},right:{label:"주민에게 보상하고 군 규율을 강화한다",effects:{treasury:-6,people:8},unrest:-4}},
+  {id:50,type:"followup",speaker:"감찰관",role:"과거의 선택",title:"관직 판매의 대가",text:"돈을 내고 관직을 얻은 관리들 사이에서 업무 부실과 사적 이익 추구에 대한 문제가 나타나고 있습니다.",auto:{effects:{treasury:-6,people:-4},unrest:3}},
+  {id:51,type:"followup",speaker:"금융가",role:"과거의 선택",title:"빚에는 이자가 붙는다",text:"몇 해 전 빌린 돈의 이자를 갚을 시기가 돌아왔습니다.",left:{label:"또 빌려서 당장의 이자를 막는다",effects:{treasury:5},unrest:2,tagsAdd:["부채누적"]},right:{label:"국고에서 이자를 상환한다",effects:{treasury:-9},unrest:-1}},
+  {id:52,type:"followup",speaker:"상인",role:"과거의 선택",title:"도로가 왕국을 연결한다",text:"새 도로와 운하를 통해 곡물과 상품이 이전보다 빠르게 이동하기 시작했습니다.",auto:{effects:{treasury:4,people:3,food:8},unrest:-2}},
+  {id:53,type:"followup",speaker:"파리 소식통",role:"과거의 선택",title:"진압은 기억에 남았다",text:"봉기는 끝났지만 가족을 잃거나 처벌받은 사람들 사이에서는 왕에 대한 반감이 사라지지 않았습니다.",auto:{effects:{people:-4},unrest:9}},
+  {id:54,type:"followup",speaker:"외교 사절",role:"과거의 선택",title:"외국의 보복 관세",text:"프랑스가 수입품에 높은 관세를 매기자 상대 국가도 프랑스 상품에 높은 관세를 부과했습니다.",auto:{effects:{treasury:-6,people:-2},unrest:2}},
+  {id:55,type:"followup",speaker:"제조업자",role:"과거의 선택",title:"왕립 제조업의 성장",text:"정부 지원을 받은 제조업이 성장하면서 프랑스 상품의 생산과 해외 판매가 늘었습니다.",auto:{effects:{treasury:10,people:4},unrest:-1}},
+  {id:56,type:"followup",speaker:"상인 조합원",role:"과거의 선택",title:"독점상인의 비리",text:"독점권을 가진 상인들이 높은 가격과 특혜를 이용해 과도한 이익을 얻고 있다는 소문입니다.",left:{label:"특권 상인들을 계속 보호한다",effects:{treasury:5,elite:4,people:-6},unrest:4},right:{label:"장부를 조사하고 특혜를 제한한다",effects:{treasury:-3,elite:-6,people:6},unrest:-4}},
+  {id:57,type:"followup",speaker:"동인도회사 서기관",role:"과거의 선택",title:"아시아 무역 수익",text:"장거리 무역선이 돌아왔습니다. 위험은 컸지만 해외 상품 판매로 수익이 생겼습니다.",auto:{effects:{treasury:9,military:-2},conditionalBonus:{tag:"해군",effects:{treasury:4}}}},
+  {id:58,type:"followup",speaker:"궁정 관리",role:"과거의 선택",title:"베르사유의 귀족들",text:"많은 귀족이 베르사유 궁정에 머물며 왕의 관심과 관직을 얻기 위해 경쟁합니다. 왕실 비용도 함께 늘었습니다.",auto:{effects:{treasury:-5,elite:5},unrest:-1}},
+  {id:59,type:"followup",speaker:"상공업 관리",role:"과거의 선택",title:"신교도 상인과 기술자가 떠나다",text:"종교적 압박을 피해 일부 신교도 상인과 숙련 기술자가 프랑스를 떠나고 있습니다.",auto:{effects:{treasury:-8,people:-5},unrest:4}},
+  {id:60,type:"followup",speaker:"전선 보고관",role:"과거의 선택",title:"전쟁이 예상보다 길어진다",text:"전쟁이 장기화되며 국고와 식량이 빠르게 소모되고 있습니다. 이전 정책의 약점도 드러나기 시작했습니다.",auto:{effects:{treasury:-10,people:-6,food:-4},unrest:5,conditionalPenalties:[{tag:"급료연기",effects:{military:-5}},{tag:"농촌피해",effects:{food:-4}}]}}
+];
+
+const AUDIENCE_CARDS = [
+  {id:61,type:"audience",turn:5,speaker:"장바티스트 콜베르",role:"재정·상공업",image:"assets/characters/colbert.png",ignore:{effects:{treasury:-3}},title:"세금만으로는 한계가 있습니다",text:"폐하, 프랑스에서 더 많은 상품을 만들고 팔게 해야 합니다. 상공업을 키우면 장기적으로 왕실 재정도 강해질 것입니다.",left:{label:"당장 세금을 확대한다",effects:{treasury:10,people:-8},unrest:4},right:{label:"왕립 제조업을 육성한다",effects:{treasury:-8,people:5},tagsAdd:["중상주의"],schedule:[{id:55,delay:3}]}},
+  {id:62,type:"audience",turn:5,speaker:"루부아",role:"군사 행정",image:"assets/characters/louvois.png",ignore:{effects:{military:-3}},title:"강한 군대에는 보급이 필요합니다",text:"병사 수만 늘려서는 안 됩니다. 급료와 무기, 숙소를 국가가 관리해야 왕에게 충성하는 군대가 됩니다.",left:{label:"병력 숫자부터 빠르게 늘린다",effects:{treasury:-11,military:15,people:-4},unrest:2},right:{label:"보급과 급료 체계를 먼저 정비한다",effects:{treasury:-9,military:10,people:5},unrest:-2,tagsAdd:["군보급정비"]}},
+  {id:63,type:"audience",turn:5,speaker:"콩데 공",role:"대귀족·명장",image:"assets/characters/conde.png",ignore:{effects:{elite:-4}},title:"굶주린 백성은 귀족에게도 위험합니다",text:"지방의 세금 부담이 너무 커지면 가장 먼저 공격받는 것은 귀족의 영지입니다. 백성의 부담도 살펴야 합니다.",left:{label:"귀족에게 지방 질서 유지 권한을 준다",effects:{military:2,elite:10,people:-3},unrest:2},right:{label:"농민 세금을 일부 감면한다",effects:{treasury:-7,elite:-5,people:10,food:4},unrest:-5}},
+
+  {id:64,type:"audience",turn:10,speaker:"장바티스트 콜베르",role:"재정·상공업",image:"assets/characters/colbert.png",ignore:{effects:{treasury:-4}},title:"프랑스 상품을 더 많이 팔아야 합니다",text:"외국 물건을 사기보다 프랑스 물건을 외국에 팔게 하십시오. 다만 어떤 수단을 쓸지는 폐하의 선택입니다.",left:{label:"높은 보호관세에 집중한다",effects:{treasury:7,people:-2},unrest:1,tagsAdd:["보호관세"],schedule:[{id:54,delay:3}]},right:{label:"왕립 제조업과 수출을 함께 지원한다",effects:{treasury:-9,people:5},tagsAdd:["중상주의"],schedule:[{id:55,delay:3}]}},
+  {id:65,type:"audience",turn:10,speaker:"보방",role:"요새·국방",image:"assets/characters/vauban.png",ignore:{effects:{military:-3}},title:"영토보다 국경을 지키십시오",text:"모든 전쟁에서 이길 필요는 없습니다. 국경의 요새를 정비하면 더 적은 비용으로 적의 진격을 막을 수 있습니다.",left:{label:"공격군을 늘려 적을 먼저 압박한다",effects:{treasury:-10,military:13,people:-3},unrest:2},right:{label:"국경 요새망을 건설한다",effects:{treasury:-10,military:12},unrest:-1,tagsAdd:["요새망"]}},
+  {id:66,type:"audience",turn:10,speaker:"보쉬에",role:"성직자·왕권 이론",image:"assets/characters/bossuet.png",ignore:{effects:{elite:-3}},title:"왕의 권력은 어떻게 정당화됩니까?",text:"왕의 권력이 신에게서 주어졌다는 생각을 강조하면 왕권의 신성함을 높일 수 있습니다. 하지만 백성을 돌보는 것도 통치의 의무입니다.",textbook:"일부 국가는 왕의 권력이 신으로부터 주어졌다는 왕권신수설로 강한 왕권을 정당화하였다.",left:{label:"교회와 함께 빈민 구휼에 나선다",effects:{treasury:-6,elite:3,people:8,food:4},unrest:-4},right:{label:"왕권신수설을 적극 강조한다",effects:{elite:10,people:-3},unrest:2,tagsAdd:["왕권신수설"]}},
+
+  {id:67,type:"audience",turn:15,speaker:"루부아",role:"군사 행정",image:"assets/characters/louvois.png",ignore:{effects:{military:-4}},title:"여기서 물러서면 희생이 헛됩니다",text:"이미 왕국은 막대한 돈을 군대에 투자했습니다. 전쟁을 계속해 성과를 얻을지, 상비군은 유지하되 전쟁을 줄일지 결정해야 합니다.",left:{label:"상비군은 유지하되 전쟁을 피한다",effects:{treasury:-7,military:7,people:3},unrest:-1},right:{label:"전쟁을 계속해 승리를 노린다",effects:{treasury:-12,military:13,elite:5,people:-6},unrest:4,tagsAdd:["공격전쟁"],schedule:[{id:60,delay:2}]}},
+  {id:68,type:"audience",turn:15,speaker:"마담 드 맹트농",role:"왕실·사회",image:"assets/characters/maintenon.png",ignore:{effects:{elite:-2,people:-2}},title:"왕의 권위에는 보호도 필요합니다",text:"백성이 왕을 인정하게 하려면 두려움뿐 아니라 왕이 자신들을 보호한다는 느낌도 필요합니다.",left:{label:"궁정과 종교적 질서를 강화한다",effects:{elite:9,people:-4},unrest:2},right:{label:"구휼과 교육에 더 투자한다",effects:{treasury:-8,elite:2,people:10,food:4},unrest:-5}},
+  {id:69,type:"audience",turn:15,speaker:"파리 상인 대표",role:"상공업자 대표(가상)",image:"assets/characters/merchant.png",ignore:{effects:{treasury:-3,people:-2}},title:"사업을 보호해 주십시오",text:"폐하께 재정을 지원할 의향이 있습니다. 대신 우리의 사업과 무역이 안정적으로 이어질 수 있게 보호해 주십시오.",textbook:"재정·군사 국가는 상공업자의 활동을 보호하고 그들로부터 재정 지원을 받았다.",left:{label:"독점권을 주고 큰돈을 받는다",effects:{treasury:15,elite:4,people:-5},unrest:3,tagsAdd:["특권상인"],schedule:[{id:56,delay:3}]},right:{label:"상업을 보호하고 정기 지원을 받는다",effects:{treasury:10,elite:-2,people:6},unrest:-1,tagsAdd:["시민협력"]}},
+
+  {id:70,type:"audience",turn:20,speaker:"니콜라 데마레",role:"재정 담당",image:"assets/characters/desmarets.png",ignore:{effects:{treasury:-4}},title:"더 빌리기만 할 수는 없습니다",text:"더 많은 빚을 다음 세대에 넘길 수 없습니다. 세금 부담을 넓히거나 국가 지출을 줄여야 합니다.",left:{label:"군사비와 궁정비를 함께 줄인다",effects:{treasury:8,military:-5,elite:-4,people:2},unrest:-2},right:{label:"특권층까지 폭넓게 과세한다",effects:{treasury:16,elite:-14,people:5},unrest:-6,tagsAdd:["특권층과세"]}},
+  {id:71,type:"audience",turn:20,speaker:"빌라르 원수",role:"군 지휘관",image:"assets/characters/villars.png",ignore:{effects:{military:-4}},title:"군대는 아직 싸울 수 있습니다",text:"군대는 지쳤지만 전투력은 남아 있습니다. 지금 협상할지 마지막 승부를 걸지는 폐하께 달렸습니다.",left:{label:"성과를 바탕으로 평화를 협상한다",effects:{treasury:9,military:-4,elite:-4,people:8,food:5},unrest:-5},right:{label:"마지막 승리를 노린다",effects:{treasury:-13,military:14,elite:6,people:-7,food:-5},unrest:5,tagsAdd:["공격전쟁"]}},
+  {id:72,type:"audience",turn:20,speaker:"페늘롱",role:"성직자·사상가",image:"assets/characters/fenelon.png",ignore:{effects:{people:-4},unrest:3},title:"국가는 누구를 위해 존재합니까?",text:"왕국의 영광보다 백성의 삶을 먼저 생각해야 한다는 목소리가 커지고 있습니다. 무엇을 지키는 통치를 선택하시겠습니까?",left:{label:"강력한 왕권과 국가 위신을 유지한다",effects:{military:3,elite:10,people:-5},unrest:4},right:{label:"궁정비와 전쟁비를 줄이고 민생을 돌본다",effects:{treasury:11,military:-8,elite:-8,people:12},unrest:-7}}
+];
+
+const ALL_CARDS = [...BASE_CARDS, ...FOLLOWUP_CARDS, ...AUDIENCE_CARDS];
+const CARD_BY_ID = Object.fromEntries(ALL_CARDS.map(c => [c.id, c]));
+
+const ACT_REQUIRED = {
+  1: [3,4],
+  2: [14,18],
+  3: [24,34],
+  4: [35,38]
+};
+
+const ACT_POOL = {
+  1: BASE_CARDS.filter(c => c.act===1 && c.id!==1).map(c=>c.id),
+  2: BASE_CARDS.filter(c => c.act===2).map(c=>c.id),
+  3: BASE_CARDS.filter(c => c.act===3).map(c=>c.id),
+  4: BASE_CARDS.filter(c => c.act===4).map(c=>c.id)
+};
+
+// 특별 알현은 매 회차 동일한 세 명이 고정되지 않는다.
+// 시기별 후보군에서 3명을 뽑되, 동일한 제안 카드는 한 통치에서 다시 나오지 않는다.
+// 콜베르·루부아처럼 장기 재임한 핵심 인물은 다른 시기에 '다른 안건'으로 재등장할 수 있다.
+const AUDIENCE_POOL_BY_TURN = {
+  5: [61,62,63,66],
+  10:[64,65,66,69],
+  15:[67,68,69,65,72],
+  20:[70,71,72,68,67]
+};
+
+const TITLES = [
+  {tier:5, id:"balanced_sun", name:"균형의 태양왕", condition:s=>s.grade==="S" && Math.min(...STAT_KEYS.map(k=>s.stats[k]))>=65 && s.unrest<=20, weight:100},
+  {tier:5, id:"beyond_history", name:"역사를 넘어선 태양왕", condition:s=>s.score>=720 && s.similarity!==null && s.similarity<=40, weight:96},
+  {tier:5, id:"shadow_louis", name:"루이의 그림자", condition:s=>s.score>=680 && s.similarity!==null && s.similarity>=90, weight:95},
+  {tier:5, id:"people_sun", name:"백성을 지킨 태양", condition:s=>s.stats.people>=85 && s.stats.food>=80 && s.unrest<=15, weight:94},
+  {tier:5, id:"kingdom_architect", name:"왕국의 설계자", condition:s=>s.profile && s.profile.completedRuns>=5 && (s.profile.aOrBetterStyles||[]).length>=3, weight:92},
+
+  {tier:4, id:"colbert_heir", name:"콜베르의 후계자", condition:s=>s.stats.treasury>=85 && s.counts.mercantilist>=4, weight:85},
+  {tier:4, id:"shield_europe", name:"유럽의 방패", condition:s=>s.stats.military>=85 && s.tags.has("요새망") && s.counts.war<=2, weight:84},
+  {tier:4, id:"war_sun", name:"전쟁의 태양", condition:s=>s.stats.military>=90 && s.counts.war>=3, weight:83},
+  {tier:4, id:"peace_sun", name:"평화의 태양", condition:s=>s.counts.peace>=3 && s.score>=650, weight:82},
+  {tier:4, id:"break_privilege", name:"특권을 꺾은 왕", condition:s=>s.tags.has("특권층과세") && s.stats.people>=65 && s.stats.elite<=45, weight:81},
+  {tier:4, id:"rising_again", name:"다시 뜨는 태양", condition:s=>s.profile && s.profile.completedRuns>=10, weight:80},
+
+  {tier:3, id:"treasury_guard", name:"금고의 수호자", condition:s=>s.stats.treasury>=80, weight:70},
+  {tier:3, id:"bread_guard", name:"빵을 지킨 왕", condition:s=>s.stats.food>=78 && s.stats.people>=70, weight:69},
+  {tier:3, id:"iron_army", name:"철의 상비군", condition:s=>s.stats.military>=80 && s.tags.has("상비군"), weight:68},
+  {tier:3, id:"merchant_patron", name:"상인의 후원자", condition:s=>s.tags.has("시민협력") || s.tags.has("동인도회사"), weight:67},
+  {tier:3, id:"reform_admin", name:"개혁 관료", condition:s=>s.tags.has("관료제") && s.stats.treasury>=65, weight:66},
+  {tier:3, id:"versailles_master", name:"베르사유의 주인", condition:s=>s.tags.has("베르사유") && s.stats.elite>=70, weight:65},
+  {tier:3, id:"three_reigns", name:"세 번의 통치", condition:s=>s.profile && s.profile.completedRuns>=3, weight:64},
+
+  {tier:2, id:"poor_beloved", name:"가난하지만 사랑받은 왕", condition:s=>s.stats.treasury<=30 && s.stats.people>=70, weight:55},
+  {tier:2, id:"empty_treasury", name:"빈 금고의 태양", condition:s=>s.stats.treasury<=20, weight:54},
+  {tier:2, id:"privilege_king", name:"귀족들의 왕", condition:s=>s.stats.elite>=85, weight:53},
+  {tier:2, id:"calm_sun", name:"흔들리지 않는 태양", condition:s=>s.unrest<=20, weight:52},
+
+  {tier:1, id:"first_reign", name:"첫 번째 태양", condition:s=>s.profile && s.profile.totalRuns>=1, weight:40},
+  {tier:1, id:"burning_kingdom", name:"불타는 왕국의 태양", condition:s=>s.unrest>=80, weight:39},
+  {tier:1, id:"army_ate_state", name:"나라보다 군대가 컸던 왕", condition:s=>s.stats.military>=85 && s.stats.treasury<=30, weight:38},
+  {tier:1, id:"lost_bread", name:"빵을 잃은 왕", condition:s=>s.stats.food<=20, weight:37}
+];
+
+</script>
+  <script>
+(() => {
+  "use strict";
+
+  const $ = (id) => document.getElementById(id);
+  const SCREENS = ["loginScreen","homeScreen","gameScreen","audienceScreen","resultScreen","titleBookScreen"];
+  const STORAGE_KEY = "sunKingUsers_v1";
+  const SESSION_KEY = "sunKingSession_v1";
+  const endpoint = (window.APP_CONFIG && window.APP_CONFIG.SHEETS_ENDPOINT || "").trim();
+
+  const els = Object.fromEntries([
+    "loginScreen","homeScreen","gameScreen","audienceScreen","resultScreen","titleBookScreen",
+    "loginForm","studentNo","studentName","studentPin","loginMessage","profileName","logoutBtn","startBtn",
+    "homeBestScore","homeTotalScore","homeRuns","homeCompleted","homeRankingList","loginRankingList","titleBookBtn","quitRunBtn",
+    "yearLabel","turnLabel","statBar","unrestHint","eventBanner","decisionCard","leftChoiceOverlay","rightChoiceOverlay",
+    "characterImage","characterFallback","speakerRole","speakerName","cardTitle","cardText","leftTapBtn","rightTapBtn",
+    "audienceTurnLabel","audienceStatBar","audienceGrid","resultYear","resultHeadline","resultCause","resultScore","resultGrade","resultScoreNote","resultMainTitle",
+    "resultSummary","resultStats","resultBestRank","resultTotalRank","titleCountLabel","earnedTitles","similarityPercent","similarityCoverage",
+    "historyComparison","playAgainBtn","homeBtn","titleBookBackBtn","titleBookList",
+    "modal","modalKicker","modalTitle","modalText","modalActions","modalCancel","modalConfirm"
+  ].map(k => [k, $(k)]));
+
+  let currentUser = null;
+  let currentProfile = null;
+  let run = null;
+  let drag = {active:false,startX:0,x:0};
+  let rankingMode = "best";
+  let loginRankingMode = "best";
+
+  // file:// 환경이나 보안 설정에서 Storage 접근이 막혀도 게임 자체가 멈추지 않도록 안전 저장소를 사용한다.
+  const memoryStore = {};
+  const memorySession = {};
+  function storageGet(key) { try { return localStorage.getItem(key); } catch { return Object.prototype.hasOwnProperty.call(memoryStore,key) ? memoryStore[key] : null; } }
+  function storageSet(key,value) { try { localStorage.setItem(key,value); } catch { memoryStore[key]=String(value); } }
+  function storageRemove(key) { try { localStorage.removeItem(key); } catch { delete memoryStore[key]; } }
+  function sessionSet(key,value) { try { sessionStorage.setItem(key,value); } catch { memorySession[key]=String(value); } }
+  function sessionRemove(key) { try { sessionStorage.removeItem(key); } catch { delete memorySession[key]; } }
+
+  const ICONS = {
+    // 한눈에 뜻이 들어오도록 단순화한 단색 SVG 아이콘.
+    treasury: `<svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="22" fill="currentColor"/><circle cx="32" cy="32" r="15" fill="none" stroke="#17100b" stroke-width="3.5" opacity=".46"/><circle cx="32" cy="32" r="5" fill="#17100b" opacity=".42"/><path d="M32 20v5M32 39v5M20 32h5M39 32h5" stroke="#17100b" stroke-width="3" stroke-linecap="round" opacity=".42"/></svg>`,
+    military: `<svg viewBox="0 0 64 64" aria-hidden="true"><path d="M32 5 38 13 35 37H29L26 13 32 5Z" fill="currentColor"/><path d="M16 36h32v7H16z" fill="currentColor"/><path d="M28 42h8v12h-8z" fill="currentColor"/><circle cx="32" cy="55" r="5" fill="currentColor"/></svg>`,
+    elite: `<svg viewBox="0 0 64 64" aria-hidden="true"><path d="M10 23 21 11l11 13 11-13 11 12-6 23H16L10 23Zm7 29h30v5H17z" fill="currentColor"/><circle cx="21" cy="27" r="3" fill="#17100b" opacity=".42"/><circle cx="32" cy="27" r="3" fill="#17100b" opacity=".42"/><circle cx="43" cy="27" r="3" fill="#17100b" opacity=".42"/></svg>`,
+    people: `<svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="17" r="8" fill="currentColor"/><circle cx="14" cy="24" r="6" fill="currentColor"/><circle cx="50" cy="24" r="6" fill="currentColor"/><path d="M18 53c1-14 6-22 14-22s13 8 14 22H18ZM3 53c1-10 5-17 11-20 4 3 6 9 6 20H3Zm41 0c0-11 2-17 6-20 6 3 10 10 11 20H44Z" fill="currentColor"/></svg>`,
+    food: `<svg viewBox="0 0 64 64" aria-hidden="true"><path d="M30 57h5V11h-5v46Z" fill="currentColor"/><path d="M28 18C20 17 15 13 13 7c8 0 13 4 15 11Zm9 4c8-1 13-5 15-11-8 0-13 4-15 11Zm-9 9c-8-1-13-5-15-11 8 0 13 4 15 11Zm9 4c8-1 13-5 15-11-8 0-13 4-15 11Zm-9 9c-7-1-12-4-15-10 8 0 13 3 15 10Zm9 4c7-1 12-4 15-10-8 0-13 3-15 10Z" fill="currentColor"/></svg>`
+  };
+
+  // 일반 사건 카드도 사용자 제공 PNG를 꽂기 쉽도록 역할별 이미지를 재사용한다.
+  const SPEAKER_IMAGE_MAP = {
+    "왕실 서기관":"assets/characters/royal_clerk.png",
+    "재정 관리":"assets/characters/finance_official.png", "회계 책임자":"assets/characters/finance_official.png", "파리의 금융가":"assets/characters/finance_official.png", "재무 책임자":"assets/characters/finance_official.png", "재무 관리":"assets/characters/finance_official.png", "금융가":"assets/characters/finance_official.png",
+    "국무 관리":"assets/characters/bureaucrat.png", "토목 관리":"assets/characters/bureaucrat.png", "기술 관리":"assets/characters/bureaucrat.png", "감찰관":"assets/characters/bureaucrat.png", "세제 개혁관":"assets/characters/bureaucrat.png", "왕실 감사관":"assets/characters/bureaucrat.png",
+    "군무 관리":"assets/characters/military_officer.png", "포병 장교":"assets/characters/military_officer.png", "왕실 장교":"assets/characters/military_officer.png", "해군 장교":"assets/characters/military_officer.png", "군 회계관":"assets/characters/military_officer.png", "포병 책임자":"assets/characters/military_officer.png", "군사 재판관":"assets/characters/military_officer.png", "전선 지휘관":"assets/characters/military_officer.png", "전선 보고관":"assets/characters/military_officer.png",
+    "지방 대표":"assets/characters/provincial_official.png", "지방 총독":"assets/characters/provincial_official.png", "지방 판사":"assets/characters/provincial_official.png",
+    "직물 상인":"assets/characters/merchant_generic.png", "수출 상인":"assets/characters/merchant_generic.png", "대상인 조합":"assets/characters/merchant_generic.png", "도시 상공업자":"assets/characters/merchant_generic.png", "제조업자":"assets/characters/merchant_generic.png", "곡물 상인":"assets/characters/merchant_generic.png", "상인":"assets/characters/merchant_generic.png", "상인 조합원":"assets/characters/merchant_generic.png", "동인도회사 서기관":"assets/characters/merchant_generic.png", "상공업 관리":"assets/characters/merchant_generic.png", "콜베르의 실무관":"assets/characters/merchant_generic.png",
+    "해외 무역 관리":"assets/characters/diplomat.png", "해외 담당관":"assets/characters/diplomat.png", "외교관":"assets/characters/diplomat.png", "외교 사절":"assets/characters/diplomat.png", "왕실 외교관":"assets/characters/diplomat.png", "평화 협상단":"assets/characters/diplomat.png",
+    "군량 관리":"assets/characters/relief_official.png", "구휼 관리":"assets/characters/relief_official.png",
+    "지방 주민":"assets/characters/peasant.png", "농민 대표":"assets/characters/peasant.png",
+    "공성 기술자":"assets/characters/engineer.png",
+    "전쟁 영웅":"assets/characters/noble.png",
+    "파리 시장":"assets/characters/paris_official.png", "파리 소식통":"assets/characters/paris_official.png",
+    "왕실 건축가":"assets/characters/architect.png",
+    "고위 성직자":"assets/characters/clergy.png",
+    "궁정 관리":"assets/characters/court_official.png", "왕실 집사":"assets/characters/court_official.png"
+  };
+  function imageForCard(card) { return card.image || SPEAKER_IMAGE_MAP[card.speaker] || ""; }
+
+  const TITLE_HINTS = {
+    balanced_sun:"S등급·모든 지표 65 이상·혁명도 20 이하",
+    beyond_history:"720점 이상이면서 실제 루이 14세와 매우 다른 길",
+    shadow_louis:"680점 이상·루이 14세 선택 유사도 90% 이상",
+    people_sun:"민중 85·식량 80 이상, 혁명도 15 이하",
+    kingdom_architect:"5회 이상 완주하고 A 이상 서로 다른 통치 유형 3종",
+    colbert_heir:"국고 85 이상·중상주의 성향 선택 4회 이상",
+    shield_europe:"군사 85 이상·요새망 보유·공격전쟁 2회 이하",
+    war_sun:"군사 90 이상·공격전쟁 3회 이상",
+    peace_sun:"평화 선택 3회 이상·650점 이상",
+    break_privilege:"특권층 과세·민중 65 이상·특권층 45 이하",
+    rising_again:"10회 완주",
+    treasury_guard:"국고 80 이상",
+    bread_guard:"식량 78 이상·민중 70 이상",
+    iron_army:"군사 80 이상·상비군 보유",
+    merchant_patron:"시민 계층 또는 동인도회사와 적극 협력",
+    reform_admin:"관료제 강화·국고 65 이상",
+    versailles_master:"베르사유 건설·특권층 70 이상",
+    three_reigns:"3회 완주",
+    poor_beloved:"국고 30 이하·민중 70 이상",
+    empty_treasury:"국고 20 이하",
+    privilege_king:"특권층 85 이상",
+    calm_sun:"혁명도 20 이하",
+    first_reign:"첫 통치 기록",
+    burning_kingdom:"혁명도 80 이상",
+    army_ate_state:"군사 85 이상·국고 30 이하",
+    lost_bread:"식량 20 이하"
+  };
+
+  function showScreen(id) {
+    SCREENS.forEach(s => els[s] && els[s].classList.toggle("screen-active", s === id));
+    const node = els[id]; if (node) node.scrollTop = 0;
+  }
+
+  function getUsers() {
+    try { return JSON.parse(storageGet(STORAGE_KEY) || "{}"); }
+    catch { return {}; }
+  }
+  function setUsers(users) { storageSet(STORAGE_KEY, JSON.stringify(users)); }
+  function userKey(no,name) { return `${String(no).trim()}|${String(name).trim()}`; }
+  async function hashPin(pin) {
+    try {
+      if (crypto && crypto.subtle) {
+        const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(pin));
+        return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,"0")).join("");
+      }
+    } catch {}
+    let h=2166136261; for (const c of pin) { h ^= c.charCodeAt(0); h = Math.imul(h,16777619); }
+    return `fallback_${(h>>>0).toString(16)}`;
+  }
+
+  async function remoteCall(action, payload={}) {
+    if (!endpoint) return null;
+    try {
+      const res = await fetch(endpoint, {method:"POST", body:JSON.stringify({action,...payload})});
+      const json = await res.json();
+      if (!json.ok) throw new Error(json.error || "서버 오류");
+      return json;
+    } catch (e) {
+      console.warn("Spreadsheet sync failed:", e);
+      return null;
+    }
+  }
+
+  function blankProfile(no,name,pinHash) {
+    return {studentNo:no,name,pinHash,totalRuns:0,completedRuns:0,bestScore:0,totalScore:0,titles:[],runs:[],aOrBetterStyles:[]};
+  }
+
+  async function login(no,name,pin) {
+    const key = userKey(no,name);
+    const pinHash = await hashPin(pin);
+    if (endpoint) {
+      const remote = await remoteCall("login", {studentNo:no,name,pinHash});
+      if (remote) {
+        currentUser = key;
+        currentProfile = remote.profile;
+        sessionSet(SESSION_KEY, JSON.stringify({studentNo:no,name}));
+        return true;
+      }
+    }
+    const users = getUsers();
+    if (!users[key]) users[key] = blankProfile(no,name,pinHash);
+    else if (users[key].pinHash !== pinHash) throw new Error("PIN이 일치하지 않습니다.");
+    setUsers(users);
+    currentUser = key;
+    currentProfile = users[key];
+    sessionSet(SESSION_KEY, JSON.stringify({studentNo:no,name}));
+    return true;
+  }
+
+  function saveLocalProfile() {
+    if (!currentUser || !currentProfile) return;
+    const users = getUsers(); users[currentUser] = currentProfile; setUsers(users);
+  }
+
+  function updateHome() {
+    if (!currentProfile) return;
+    els.profileName.textContent = `${currentProfile.studentNo} ${currentProfile.name}`;
+    els.homeBestScore.textContent = currentProfile.bestScore || 0;
+    els.homeTotalScore.textContent = currentProfile.totalScore || 0;
+    els.homeRuns.textContent = `${currentProfile.totalRuns || 0}회`;
+    els.homeCompleted.textContent = `${currentProfile.completedRuns || 0}회`;
+    renderHomeRanking(rankingMode);
+  }
+
+  function shuffle(arr, rng=Math.random) {
+    const a=[...arr]; for(let i=a.length-1;i>0;i--){const j=Math.floor(rng()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a;
+  }
+  function chooseActCards(act, count) {
+    const req = ACT_REQUIRED[act];
+    const rest = ACT_POOL[act].filter(id=>!req.includes(id));
+    return shuffle([...req, ...shuffle(rest).slice(0,count-req.length)]);
+  }
+  function buildTurnDeck() {
+    const deck = {1:1};
+    chooseActCards(1,3).forEach((id,i)=>deck[2+i]=id);
+    chooseActCards(2,4).forEach((id,i)=>deck[6+i]=id);
+    chooseActCards(3,4).forEach((id,i)=>deck[11+i]=id);
+    chooseActCards(4,4).forEach((id,i)=>deck[16+i]=id);
+    return deck;
+  }
+
+  function makeRunId() {
+    try { if (window.crypto && typeof window.crypto.randomUUID === "function") return window.crypto.randomUUID(); } catch {}
+    return `${Date.now()}_${Math.random().toString(36).slice(2)}`;
+  }
+
+  function validateGameData() {
+    if (!Array.isArray(STAT_KEYS) || STAT_KEYS.length !== 5) throw new Error("국가 지표 데이터를 불러오지 못했습니다.");
+    if (!CARD_BY_ID || !CARD_BY_ID[1]) throw new Error("카드 데이터를 불러오지 못했습니다.");
+    [5,10,15,20].forEach(t=>{ if(!AUDIENCE_POOL_BY_TURN[t] || AUDIENCE_POOL_BY_TURN[t].length<3) throw new Error(`TURN ${t} 알현 후보 데이터를 확인해 주세요.`); });
+  }
+
+  function newRun() {
+    try {
+      validateGameData();
+      run = {
+        id: makeRunId(),
+        turn:1,
+        stats:{treasury:48,military:45,elite:50,people:48,food:52},
+        unrest:18,
+        tags:new Set(),
+        history:{},
+        counts:{war:0,peace:0,mercantilist:0},
+        audienceFavor:{},
+        audienceSeenCards:new Set(),
+        audiencePicks:{},
+        scheduled:[],
+        legacy:[],
+        turnLegacyNotice:"",
+        dueQueue:[],
+        deck:buildTurnDeck(),
+        completed:false,
+        ended:false,
+        endCause:null,
+        highCrisisResolved:new Set(),
+        current:null,
+        mainTurnInProgress:false,
+        decisions:[]
+      };
+      showScreen("gameScreen");
+      updateStatBar(true);
+      beginTurn();
+    } catch (err) {
+      console.error("Game start failed", err);
+      showNoticeModal({kicker:"실행 오류",title:"게임을 시작하지 못했습니다",text:`${err?.message || err}\n\n전체 압축파일을 푼 뒤 index.html을 다시 실행해 주세요.`});
+    }
+  }
+
+  function eraLabel(turn) {
+    if (turn<=5) return "1660년대 · 친정 초기";
+    if (turn<=10) return "1670~1680년대 · 성장기";
+    if (turn<=15) return "1680~1690년대 · 팽창기";
+    return "1690~1715 · 통치 후반";
+  }
+
+  function formatSentenceLines(text, joiner="<br>") {
+    return String(text||"")
+      .split(/(?<=[.!?])\s+/)
+      .map(part=>part.trim())
+      .filter(Boolean)
+      .map(escapeHtml)
+      .join(joiner);
+  }
+
+  function setPrettyText(el, text) {
+    el.innerHTML = formatSentenceLines(text);
+  }
+
+  function setChoiceOverlayLabel(el, text, kicker="선택") {
+    el.innerHTML = `<span class="choice-kicker">${escapeHtml(kicker)}</span><strong>${formatSentenceLines(text, '<br>')}</strong>`;
+  }
+
+  function formatBannerBody(body) {
+    return String(body||"")
+      .replace(/\s*·\s*/g, "\n")
+      .split(/\n+/)
+      .map(part=>part.trim())
+      .filter(Boolean)
+      .map(part=>`<span class="event-line">${formatSentenceLines(part)}</span>`)
+      .join("");
+  }
+
+  function setEventBanner(kind, kicker, body) {
+    els.eventBanner.className = `event-banner banner-${kind}`;
+    els.eventBanner.innerHTML = `<span class="event-kicker">${escapeHtml(kicker)}</span><span class="event-body">${formatBannerBody(body)}</span>`;
+    els.eventBanner.classList.remove("hidden");
+  }
+
+  function hideEventBanner() {
+    els.eventBanner.className = 'event-banner hidden';
+    els.eventBanner.innerHTML = '';
+  }
+
+  function beginTurn() {
+    if (!run || run.ended) return;
+    if (run.turn > 20) return finishRun(true);
+    els.yearLabel.textContent = eraLabel(run.turn);
+    els.turnLabel.textContent = `TURN ${run.turn} / 20`;
+
+    // 큰 선택의 비용은 즉시 끝나지 않고 2~3턴 뒤 다시 돌아온다.
+    // 학생이 단순히 현재 수치만 보고 최적값을 고르는 플레이를 막고,
+    // 정책의 장기적 대가를 읽도록 만드는 핵심 난이도 장치다.
+    const legacyNotices = applyDueLegacyEffects();
+    run.turnLegacyNotice = legacyNotices.join(" · ");
+    updateStatBar();
+    updateUnrestHint();
+    const legacyEnd = checkImmediateEnd();
+    if (legacyEnd) return finishRun(false, legacyEnd);
+
+    const due = run.scheduled.filter(x => x.dueTurn <= run.turn && !x.done);
+    due.forEach(x => x.done=true);
+    if (due.length) {
+      run.dueQueue.push(...due);
+      return showNextFollowup();
+    }
+    startMainTurn();
+  }
+
+  function showNextFollowup() {
+    if (!run.dueQueue.length) return startMainTurn();
+    const item = run.dueQueue.shift();
+    const card = CARD_BY_ID[item.id];
+    run.current = {kind:"followup",card,source:item};
+    showScreen("gameScreen");
+    setEventBanner("followup", "과거의 결정이 돌아왔습니다", `TURN ${item.sourceTurn} 「${item.sourceTitle}」`);
+    renderCard(card);
+  }
+
+  function startMainTurn() {
+    if (run.turnLegacyNotice) {
+      setEventBanner("legacy", "지난 선택의 여파", run.turnLegacyNotice.replace(/ · /g, '. '));
+      run.turnLegacyNotice = "";
+    } else {
+      hideEventBanner();
+    }
+    if ([5,10,15,20].includes(run.turn)) return showAudience();
+    const card = CARD_BY_ID[run.deck[run.turn]];
+    run.current={kind:"main",card};
+    run.mainTurnInProgress=true;
+    showScreen("gameScreen");
+    renderCard(card);
+  }
+
+  function audienceIdsForTurn(turn) {
+    if (run.audiencePicks[turn]) return run.audiencePicks[turn];
+    const pool=[...(AUDIENCE_POOL_BY_TURN[turn]||[])];
+    const fresh=pool.filter(id=>!run.audienceSeenCards.has(id));
+    let candidates=fresh.length>=3?fresh:pool;
+    const picked=shuffle(candidates).slice(0,3);
+    run.audiencePicks[turn]=picked;
+    picked.forEach(id=>run.audienceSeenCards.add(id));
+    return picked;
+  }
+
+  function renderStatSnapshot(container) {
+    if(!container) return;
+    container.innerHTML=STAT_KEYS.map(k=>`<div class="stat-item" data-stat="${k}" aria-label="${STAT_META[k].label}"><span class="stat-preview" aria-hidden="true"></span><div class="stat-icon">${ICONS[k]}</div><div class="stat-track"><div class="stat-fill" style="width:${run.stats[k]}%"></div></div><span class="stat-label">${STAT_META[k].short}</span></div>`).join("");
+    STAT_KEYS.forEach(k=>{
+      const node=container.querySelector(`[data-stat="${k}"]`);
+      if(node) node.classList.toggle("danger",run.stats[k]<=15||run.stats[k]>=95);
+    });
+  }
+
+  function showAudience() {
+    const ids=audienceIdsForTurn(run.turn);
+    els.audienceTurnLabel.textContent=`TURN ${run.turn}`;
+    renderStatSnapshot(els.audienceStatBar);
+    els.audienceGrid.innerHTML="";
+    ids.forEach(id=>{
+      const card=CARD_BY_ID[id];
+      const wrap=document.createElement("button");
+      wrap.className="audience-person"; wrap.type="button";
+      wrap.innerHTML=`<div class="audience-portrait"><img alt="" src="${imageForCard(card)}"><div class="fallback-mini"></div></div><div class="audience-copy"><small>${escapeHtml(card.role)}</small><h3>${escapeHtml(card.speaker)}</h3><p>${escapeHtml(card.title)}</p></div>`;
+      const img=wrap.querySelector("img"); img.addEventListener("error",()=>img.classList.add("hidden"));
+      wrap.addEventListener("click",()=>selectAudience(id));
+      els.audienceGrid.appendChild(wrap);
+    });
+    showScreen("audienceScreen");
+  }
+
+  function selectAudience(selectedId) {
+    const ids=audienceIdsForTurn(run.turn);
+    const ignored=[];
+    ids.filter(id=>id!==selectedId).forEach(id=>{
+      const c=CARD_BY_ID[id];
+      applyRaw(c.ignore || {});
+      run.audienceFavor[id]=(run.audienceFavor[id]||0)-1;
+      const repeatPenalty = run.audienceFavor[id] <= -2 ? 2 : 0;
+      if (repeatPenalty) {
+        const mainStat=Object.keys((c.ignore&&c.ignore.effects)||{})[0];
+        if(mainStat) applyEffects({[mainStat]:-repeatPenalty});
+      }
+      ignored.push(c.speaker);
+    });
+    run.audienceFavor[selectedId]=(run.audienceFavor[selectedId]||0)+1;
+    const card=CARD_BY_ID[selectedId];
+    run.current={kind:"audience",card};
+    run.mainTurnInProgress=true;
+    showScreen("gameScreen");
+    setEventBanner("audience", "알현의 여파", `${ignored.join(' · ')}의 알현을 뒤로 미뤘습니다. 해당 인물과 연결된 계층의 불만이 반영됩니다.`);
+    updateStatBar();
+    renderCard(card);
+    const end = checkImmediateEnd(); if (end) finishRun(false,end);
+  }
+
+  function renderCard(card) {
+    resetCardTransform();
+    els.gameScreen.classList.toggle("followup-result", !!card.auto);
+    els.gameScreen.classList.remove("card-compact","card-standard","card-long");
+    const cardTextLength = `${card.role||""} ${card.speaker||""} ${card.title||""} ${card.text||""} ${card.left?.label||""} ${card.right?.label||""}`.length;
+    const densityClass = card.auto || cardTextLength < 135 ? "card-compact" : (cardTextLength < 235 ? "card-standard" : "card-long");
+    els.gameScreen.classList.add(densityClass);
+    els.speakerRole.textContent=card.role||"왕실 보고";
+    els.speakerName.textContent=card.speaker||"왕실 관리";
+    els.cardTitle.textContent=card.title||"";
+    setPrettyText(els.cardText, card.text||"");
+    els.characterImage.classList.add("hidden");
+    els.characterImage.removeAttribute("src");
+    const portraitSrc=imageForCard(card);
+    if (portraitSrc) {
+      els.characterImage.src=portraitSrc;
+      els.characterImage.onload=()=>els.characterImage.classList.remove("hidden");
+      els.characterImage.onerror=()=>els.characterImage.classList.add("hidden");
+    }
+
+    els.leftTapBtn.classList.add("hidden");
+    els.rightTapBtn.classList.add("hidden");
+    els.leftTapBtn.onclick=null; els.rightTapBtn.onclick=null;
+    if (card.auto) {
+      els.leftChoiceOverlay.innerHTML=""; els.rightChoiceOverlay.innerHTML="";
+      els.decisionCard.style.cursor="grab";
+    } else {
+      setChoiceOverlayLabel(els.leftChoiceOverlay, card.left.label, "선택 1");
+      setChoiceOverlayLabel(els.rightChoiceOverlay, card.right.label, "선택 2");
+      els.decisionCard.style.cursor="grab";
+    }
+  }
+
+  function resolveAuto(card) {
+    applyRaw(card.auto);
+    if (card.auto.conditionalBonus && run.tags.has(card.auto.conditionalBonus.tag)) applyEffects(card.auto.conditionalBonus.effects||{});
+    (card.auto.conditionalPenalties||[]).forEach(c=>{if(run.tags.has(c.tag)) applyEffects(c.effects||{})});
+    run.decisions.push({turn:run.turn,cardId:card.id,choice:"auto",title:card.title});
+    afterDecision("followup");
+  }
+
+  function commitChoice(side) {
+    if (!run || !run.current) return;
+    if (run.current.card.auto) {
+      return animateExit(side,()=>resolveAuto(run.current.card));
+    }
+    if (run.current.kind === "crisis") return commitCrisisChoice(side);
+    const currentKind=run.current.kind;
+    const card=run.current.card, choice=card[side];
+    animateExit(side,()=>{
+      applyChoice(card,choice,side);
+      afterDecision(currentKind);
+    });
+  }
+
+  function applyChoice(card, choice, side) {
+    applyRaw(choice);
+    if (choice.history) Object.assign(run.history,choice.history);
+    if (choice.schedule) choice.schedule.forEach(s=>run.scheduled.push({id:s.id,dueTurn:run.turn+s.delay,sourceTurn:run.turn,sourceTitle:card.title,done:false}));
+    scheduleLegacyFromChoice(card, choice);
+    const text=(choice.label||"");
+    if (/전쟁|공세|영토를 차지|계승을 받아/.test(text)) run.counts.war++;
+    if (/평화|협상|전쟁을 피|외교/.test(text)) run.counts.peace++;
+    if (/제조업|수출|관세|동인도|상공업|독점/.test(text)) run.counts.mercantilist++;
+    run.decisions.push({turn:run.turn,cardId:card.id,choice:side,title:card.title,label:choice.label});
+  }
+
+  function applyRaw(obj) {
+    if (!obj) return;
+    applyEffects(obj.effects||{});
+    run.unrest = clamp(run.unrest + (obj.unrest||0));
+    (obj.tagsAdd||[]).forEach(t=>run.tags.add(t));
+    (obj.tagsRemove||[]).forEach(t=>run.tags.delete(t));
+  }
+  function applyEffects(effects) {
+    Object.entries(effects||{}).forEach(([k,v])=>{
+      if (STAT_KEYS.includes(k)) run.stats[k]=clamp(run.stats[k]+v);
+    });
+  }
+  const clamp=n=>Math.max(0,Math.min(100,n));
+
+  function pushLegacy(delay, effects, unrest, reason) {
+    if (!run || run.turn + delay > 20) return;
+    run.legacy.push({dueTurn:run.turn+delay,effects:{...(effects||{})},unrest:unrest||0,reason,done:false});
+  }
+
+  function scheduleLegacyFromChoice(card, choice) {
+    const e=choice.effects||{};
+    const label=choice.label||"";
+    const hasLongWarFollowup=(choice.schedule||[]).some(s=>s.id===60);
+
+    // 군사력 급증은 2턴 뒤에도 급료·보급 비용을 남긴다.
+    if ((e.military||0)>=10 && (e.treasury||0)<=-7)
+      pushLegacy(2,{treasury:-4,food:-2},1,"확대한 군대의 급료와 보급 비용이 다시 청구되었습니다.");
+
+    // 세입을 크게 올리는 대신 민중을 압박한 선택은 뒤늦은 생활고로 이어진다.
+    if ((e.treasury||0)>=10 && (e.people||0)<=-4)
+      pushLegacy(2,{people:-4,food:-1},3,"강한 징수의 부담이 지방의 생활고와 불만으로 돌아왔습니다.");
+
+    // 큰 구휼·민생 지출도 지속 비용이 있다. 좋은 선택에도 공짜 효과는 없다.
+    if ((e.people||0)>=8 && (e.treasury||0)<=-6)
+      pushLegacy(2,{treasury:-3,food:-1},0,"구휼과 민생 정책을 계속 유지하기 위한 비용이 발생했습니다.");
+
+    // 특권층에 크게 기대면 다른 계층의 반발이 누적된다.
+    if ((e.elite||0)>=8 && (e.people||0)<=0)
+      pushLegacy(2,{people:-2},2,"특권층 중심 정책에 대한 불만이 뒤늦게 퍼지고 있습니다.");
+
+    // 전쟁 카드에 별도 장기전 후속 카드가 없다면 일반적인 전쟁 피로를 붙인다.
+    if (/전쟁|공세|영토를 차지|계승을 받아/.test(label) && !hasLongWarFollowup)
+      pushLegacy(2,{treasury:-4,food:-3,people:-2},3,"전쟁이 길어지며 국고·식량·민심에 추가 부담이 생겼습니다.");
+  }
+
+  function applyDueLegacyEffects() {
+    if (!run?.legacy?.length) return [];
+    const due=run.legacy.filter(x=>x.dueTurn<=run.turn&&!x.done);
+    const notices=[];
+    due.forEach(x=>{
+      x.done=true;
+      applyEffects(x.effects||{});
+      run.unrest=clamp(run.unrest+(x.unrest||0));
+      if(x.reason) notices.push(x.reason);
+    });
+    return notices.slice(0,2);
+  }
+
+  function applyTurnPressure() {
+    // v0.9 난이도: 국가가 커질수록 유지비가 커지고, 낮은 지표는 다른 지표까지 연쇄적으로 흔든다.
+    // 첫 판에는 단기 이득만 쫓으면 10~15턴 부근에서 무너지기 쉽고, 반복 플레이로 장기 비용을 학습하면 20턴 완주가 가능하도록 조정했다.
+    const t=run.turn;
+
+    if(t>=6 && t%2===0 && run.tags.has("상비군")) applyEffects({treasury:-3,food:-1});
+    if(t>=11 && t%2===1 && run.tags.has("베르사유")) applyEffects({treasury:-3});
+
+    // 전쟁을 여러 차례 선택하면 후반에는 매 턴 전쟁 수행비가 따라온다.
+    if(t>=11 && run.counts.war>=2) {
+      applyEffects({treasury:-2,food:-1,people:-1});
+      run.unrest=clamp(run.unrest+1);
+    }
+
+    if(t>=8 && t%3===0 && (run.tags.has("관직판매") || run.tags.has("특권상인")))
+      run.unrest=clamp(run.unrest+3);
+
+    // 대규모 관료제·군사국가를 유지하는 기본 비용. 후반으로 갈수록 재정·식량 관리가 중요해진다.
+    if(t>=10) {
+      applyEffects({treasury:-1});
+      if(t%2===0) applyEffects({food:-1});
+    }
+
+    // 장기 통치 자체가 쌓는 피로. 혁명도는 직접 숫자로 보여주지 않는다.
+    if(t>=12) run.unrest=clamp(run.unrest+1);
+    if(t>=16) run.unrest=clamp(run.unrest+1);
+
+    // 한 지표만 지나치게 키우는 플레이를 억제한다.
+    const values=STAT_KEYS.map(k=>run.stats[k]);
+    if(Math.max(...values)-Math.min(...values)>=45) run.unrest=clamp(run.unrest+2);
+
+    // 낮은 지표는 다른 영역을 연쇄적으로 무너뜨린다.
+    if(run.stats.people<=30) { run.unrest=clamp(run.unrest+4); applyEffects({elite:-1}); }
+    if(run.stats.food<=30) { run.unrest=clamp(run.unrest+5); applyEffects({people:-2,military:-1}); }
+    if(run.stats.elite<=24) { run.unrest=clamp(run.unrest+3); applyEffects({military:-1}); }
+    if(run.stats.treasury<=24) { run.unrest=clamp(run.unrest+3); applyEffects({military:-2}); }
+    if(run.stats.military<=20) { run.unrest=clamp(run.unrest+2); applyEffects({elite:-2}); }
+  }
+
+  function afterDecision(kind) {
+    updateStatBar(); updateUnrestHint();
+    const immediate=checkImmediateEnd();
+    if (immediate) return setTimeout(()=>finishRun(false,immediate),360);
+    const high=makeHighCrisis();
+    if (high) return setTimeout(()=>showHighCrisis(high),360);
+    setTimeout(()=>{
+      if (kind==="followup") showNextFollowup();
+      else {
+        applyTurnPressure();
+        updateStatBar(); updateUnrestHint();
+        const pressureEnd=checkImmediateEnd();
+        if(pressureEnd) return finishRun(false,pressureEnd);
+        run.mainTurnInProgress=false; run.turn++; beginTurn();
+      }
+    },400);
+  }
+
+  function checkImmediateEnd() {
+    for (const k of STAT_KEYS) if (run.stats[k] <= 0) {
+      const causes={treasury:["국가 파산","군인의 급료와 관리의 봉급조차 지급할 수 없게 되었습니다."],military:["무너진 군대","국경과 왕명을 지킬 군사력이 붕괴했습니다."],elite:["궁정의 반란","특권층이 더 이상 왕의 명령을 받아들이지 않습니다."],people:["왕국의 봉기","세금과 생활고에 분노한 사람들이 곳곳에서 왕권에 맞섰습니다."],food:["빵이 사라진 왕국","식량 부족이 왕국 전체의 질서를 무너뜨렸습니다."]};
+      return {title:causes[k][0],text:causes[k][1]};
+    }
+    if (run.unrest>=100) return {title:"왕국 대폭발",text:"오랫동안 누적된 불만이 더 이상 왕명만으로 통제할 수 없는 수준에 이르렀습니다."};
+    return null;
+  }
+
+  function makeHighCrisis() {
+    const s=run.stats;
+    if (s.military>=100 && !run.highCrisisResolved.has("military")) return "military";
+    if (s.elite>=100 && !run.highCrisisResolved.has("elite")) return "elite";
+    if (s.people>=100 && !run.highCrisisResolved.has("people")) return "people";
+    if (s.treasury>=100 && !run.highCrisisResolved.has("treasury") && (s.people<45 || run.tags.has("관직판매") || run.tags.has("특권상인"))) return "treasury";
+    if (s.food>=100 && !run.highCrisisResolved.has("food") && (run.tags.has("곡물비축") || s.treasury<40)) return "food";
+    return null;
+  }
+
+  function highCrisisCard(type) {
+    const cards={
+      military:{speaker:"왕실 비상회의",role:"과도한 군사 집중",title:"칼이 왕보다 커졌다",text:"프랑스군은 유럽 최강 수준이지만 국가의 인력과 재정이 군대로 지나치게 집중되었습니다. 군 지휘부의 영향력도 커지고 있습니다.",left:{label:"군대 규모를 줄이고 민생으로 자원을 돌린다",effects:{military:-20,treasury:6,people:8},unrest:-5},right:{label:"더 강한 군사국가로 밀어붙인다",end:{title:"군대가 삼킨 왕국",text:"국가의 모든 기능이 전쟁과 군대를 위해 움직이기 시작했고 왕은 스스로 만든 군사체제를 통제하지 못하게 되었습니다."}}},
+      elite:{speaker:"왕실 비상회의",role:"특권층 과잉",title:"특권의 왕국",text:"귀족과 특권층은 왕을 열렬히 지지하지만 그 대가로 세금과 개혁 요구를 계속 거부하고 있습니다.",left:{label:"일부 특권을 회수한다",effects:{elite:-20,treasury:8,people:6},unrest:-5},right:{label:"특권을 더 보장해 지지를 유지한다",end:{title:"왕보다 강한 특권",text:"왕은 귀족의 지지를 잃지 않기 위해 더 이상 필요한 개혁을 추진할 수 없게 되었습니다."}}},
+      people:{speaker:"왕실 비상회의",role:"국가 기능 위기",title:"거리의 왕",text:"왕은 백성에게 큰 인기를 얻었지만 세금·군역·가격 통제 요구를 모두 받아들이면서 국가 행정이 흔들리고 있습니다.",left:{label:"인기를 감수하고 필요한 부담을 다시 요구한다",effects:{people:-20,treasury:8,military:4},unrest:2},right:{label:"모든 요구를 계속 받아들인다",end:{title:"박수 속에 멈춘 국가",text:"왕은 사랑받았지만 세입과 군역이 무너지면서 국가가 기본 기능을 유지하지 못하게 되었습니다."}}},
+      treasury:{speaker:"왕실 비상회의",role:"왜곡된 재정",title:"금고는 가득 찼는데 나라가 지쳤다",text:"왕실 금고는 넘치지만 그 과정에서 지나친 징수와 특혜가 누적되었습니다. 숫자만으로는 건강한 재정을 의미하지 않습니다.",left:{label:"세 부담과 특혜를 줄여 경제에 돈을 돌린다",effects:{treasury:-18,people:9,elite:-4},unrest:-5},right:{label:"지금의 징수 방식을 더 강화한다",end:{title:"금으로 잠긴 왕국",text:"왕실 금고는 가득했지만 생산과 소비, 민심이 얼어붙으며 국가는 장기적으로 기능을 잃었습니다."}}},
+      food:{speaker:"왕실 비상회의",role:"곡물 정책 위기",title:"곡물이 창고에만 쌓인다",text:"곡물 비축은 충분하지만 유통이 막히거나 가격이 지나치게 떨어져 농촌과 상인이 흔들리고 있습니다.",left:{label:"일부 비축분을 시장과 지방에 푼다",effects:{food:-18,people:7,treasury:3},unrest:-4},right:{label:"왕실 창고에 계속 쌓아둔다",end:{title:"쌓인 곡물, 멈춘 시장",text:"식량은 있었지만 유통과 가격 정책이 실패해 생산자와 시장이 동시에 흔들렸습니다."}}}
+    };
+    return {...cards[type],crisisType:type};
+  }
+
+  function showHighCrisis(type) {
+    const card=highCrisisCard(type);
+    run.current={kind:"crisis",card};
+    setEventBanner("crisis", "국가 비상", "국가 지표가 극단에 도달했습니다. 100도 언제나 안전한 수치는 아닙니다.");
+    renderCard(card);
+  }
+
+  function commitCrisisChoice(side) {
+    const card=run.current.card, choice=card[side];
+    animateExit(side,()=>{
+      if (choice.end) return finishRun(false,choice.end);
+      applyRaw(choice);
+      run.highCrisisResolved.add(card.crisisType);
+      updateStatBar(); updateUnrestHint();
+      const immediate=checkImmediateEnd();
+      if(immediate) return finishRun(false,immediate);
+      setTimeout(()=>{
+        if (run.dueQueue.length) showNextFollowup();
+        else if (run.mainTurnInProgress) { run.mainTurnInProgress=false; run.turn++; beginTurn(); }
+        else startMainTurn();
+      },350);
+    });
+  }
+
+  function previewEffects(choice) {
+    clearPreview();
+    if (!choice || !choice.effects) return;
+    Object.entries(choice.effects).forEach(([k,v])=>{
+      if (!STAT_KEYS.includes(k) || !v) return;
+      const node=els.statBar.querySelector(`[data-stat="${k}"]`);
+      if(node) {
+        node.classList.add("preview-impact");
+        const marker=node.querySelector(".stat-preview");
+        // 사전에는 상승/하락과 크기를 모두 숨긴다.
+        // 오직 "이 지표가 영향을 받는다"는 사실만 보여줘 카드 내용을 읽게 한다.
+        if(marker) marker.textContent="●";
+      }
+    });
+  }
+  function clearPreview() {
+    els.statBar.querySelectorAll(".stat-item").forEach(n=>{
+      n.classList.remove("preview-up","preview-down","preview-impact");
+      const marker=n.querySelector(".stat-preview");
+      if(marker) marker.textContent="";
+    });
+  }
+
+  function updateStatBar(first=false) {
+    if (first || !els.statBar.children.length) {
+      els.statBar.innerHTML=STAT_KEYS.map(k=>`<div class="stat-item" data-stat="${k}" aria-label="${STAT_META[k].label}"><span class="stat-preview" aria-hidden="true"></span><div class="stat-icon">${ICONS[k]}</div><div class="stat-track"><div class="stat-fill"></div></div><span class="stat-label">${STAT_META[k].short}</span></div>`).join("");
+    }
+    STAT_KEYS.forEach(k=>{
+      const node=els.statBar.querySelector(`[data-stat="${k}"]`), fill=node.querySelector(".stat-fill");
+      const old=parseFloat(fill.dataset.value||run.stats[k]); const now=run.stats[k];
+      fill.style.width=`${now}%`; fill.dataset.value=String(now);
+      node.classList.toggle("danger",now<=15||now>=95);
+      node.classList.remove("stat-pulse-up","stat-pulse-down");
+      if(!first && now!==old){void node.offsetWidth;node.classList.add(now>old?"stat-pulse-up":"stat-pulse-down")}
+    });
+  }
+
+  function updateUnrestHint() {
+    const u=run.unrest;
+    els.unrestHint.textContent = u<30?"왕국은 안정되어 있습니다.":u<50?"곳곳에서 불평이 들려옵니다.":u<70?"⚠ 파리와 지방에서 소요가 늘고 있습니다.":u<90?"⚠ 왕의 권위에 도전하는 목소리가 커집니다.":"🔥 왕국이 폭발 직전입니다.";
+  }
+
+  function resetCardTransform() {
+    drag={active:false,startX:0,x:0};
+    els.decisionCard.style.transition="none"; els.decisionCard.style.transform="translateX(0) rotate(0)"; els.decisionCard.style.opacity="1";
+    els.leftChoiceOverlay.style.opacity=0; els.rightChoiceOverlay.style.opacity=0; clearPreview();
+  }
+  function animateExit(side, cb) {
+    const dir=side==="right"?1:-1;
+    els.decisionCard.style.transition="transform .28s ease, opacity .25s";
+    els.decisionCard.style.transform=`translateX(${dir*145}%) rotate(${dir*10}deg)`; els.decisionCard.style.opacity="0";
+    setTimeout(cb,270);
+  }
+
+  function pointerDown(e) {
+    if(!run?.current) return;
+    drag.active=true;drag.startX=e.clientX;drag.x=0;els.decisionCard.setPointerCapture?.(e.pointerId);
+  }
+  function pointerMove(e) {
+    if(!drag.active) return;
+    drag.x=e.clientX-drag.startX;
+    const max=170, x=Math.max(-max,Math.min(max,drag.x));
+    els.decisionCard.style.transition="none";els.decisionCard.style.transform=`translateX(${x}px) rotate(${x/24}deg)`;
+    const a=Math.min(1,Math.abs(x)/92);
+    if (run.current?.card?.auto) {
+      if (Math.abs(x) < 8) {
+        els.leftChoiceOverlay.style.opacity=0; els.rightChoiceOverlay.style.opacity=0;
+      } else if (x < 0) {
+        setChoiceOverlayLabel(els.rightChoiceOverlay, '계속 진행', '다음으로');
+        els.leftChoiceOverlay.style.opacity=0; els.rightChoiceOverlay.style.opacity=a;
+      } else {
+        setChoiceOverlayLabel(els.leftChoiceOverlay, '계속 진행', '다음으로');
+        els.rightChoiceOverlay.style.opacity=0; els.leftChoiceOverlay.style.opacity=a;
+      }
+      clearPreview();
+      return;
+    }
+    if (Math.abs(x) < 8) {
+      els.leftChoiceOverlay.style.opacity=0; els.rightChoiceOverlay.style.opacity=0; clearPreview();
+      return;
+    }
+    if (x < 0) {
+      setChoiceOverlayLabel(els.rightChoiceOverlay, run.current.card.left.label, "선택 1");
+      els.leftChoiceOverlay.style.opacity=0;
+      els.rightChoiceOverlay.style.opacity=a;
+      previewEffects(run.current.card.left);
+    } else {
+      setChoiceOverlayLabel(els.leftChoiceOverlay, run.current.card.right.label, "선택 2");
+      els.rightChoiceOverlay.style.opacity=0;
+      els.leftChoiceOverlay.style.opacity=a;
+      previewEffects(run.current.card.right);
+    }
+  }
+  function pointerUp() {
+    if(!drag.active) return; drag.active=false;
+    if(Math.abs(drag.x)>=98) commitChoice(drag.x>0?"right":"left");
+    else {els.decisionCard.style.transition="transform .2s ease";els.decisionCard.style.transform="translateX(0) rotate(0)";els.leftChoiceOverlay.style.opacity=0;els.rightChoiceOverlay.style.opacity=0;clearPreview();}
+  }
+
+  function scoreRun(turnReached) {
+    // TURN 10 이전에 끝난 통치는 기록은 남기되 랭킹 점수를 얻지 못한다.
+    if (turnReached < 10) return 0;
+    const sum=STAT_KEYS.reduce((a,k)=>a+run.stats[k],0);
+    const min=Math.min(...STAT_KEYS.map(k=>run.stats[k]));
+    const base = sum*1.2 + min*2 + (100-run.unrest)*2;
+    const completion=Math.max(10,Math.min(20,turnReached))/20;
+    const factor=.4+.6*completion;
+    return Math.max(0,Math.round(base*factor));
+  }
+  function gradeFor(score){return score>=690?"S":score>=630?"A":score>=560?"B":score>=490?"C":score>=420?"D":"E"}
+  function similarityInfo() {
+    const rows=HISTORY_ITEMS.map(i=>({label:i.label,louis:i.louis,player:Object.prototype.hasOwnProperty.call(run.history,i.key)?run.history[i.key]:null}));
+    const reached=rows.filter(r=>r.player!==null); const matches=reached.filter(r=>r.player===r.louis).length;
+    return {rows,reached:reached.length,total:rows.length,percent:reached.length?Math.round(matches/reached.length*100):null};
+  }
+  function classifyStyle() {
+    const s=run.stats;
+    if(Math.max(...STAT_KEYS.map(k=>s[k]))-Math.min(...STAT_KEYS.map(k=>s[k]))<=18) return "균형";
+    const max=STAT_KEYS.reduce((a,b)=>s[a]>=s[b]?a:b);
+    return ({treasury:"경제",military:"군사",elite:"특권",people:"민생",food:"식량"})[max];
+  }
+  function titleState(score,grade,sim,projectedProfile) {
+    return {score,grade,similarity:sim.percent,stats:run.stats,unrest:run.unrest,tags:run.tags,counts:run.counts,profile:projectedProfile};
+  }
+  function evaluateTitles(state) { return TITLES.filter(t=>{try{return t.condition(state)}catch{return false}}).sort((a,b)=>b.tier-a.tier||b.weight-a.weight); }
+  function topTitleIds(profile) {
+    return (profile.titles||[]).map(id=>TITLES.find(t=>t.id===id)).filter(Boolean).sort((a,b)=>b.tier-a.tier||b.weight-a.weight).slice(0,3).map(t=>t.id);
+  }
+
+  async function finishRun(completed=false,cause=null) {
+    if(!run || run.ended) return;
+    run.ended=true; run.completed=completed;
+    run.endCause=cause;
+    const turnReached=Math.min(20,run.turn);
+    const score=scoreRun(turnReached), grade=gradeFor(score), sim=similarityInfo(), style=classifyStyle();
+
+    const projected=JSON.parse(JSON.stringify(currentProfile));
+    projected.totalRuns=(projected.totalRuns||0)+1;
+    projected.completedRuns=(projected.completedRuns||0)+(completed?1:0);
+    projected.aOrBetterStyles=Array.from(new Set(projected.aOrBetterStyles||[]));
+    if(completed && ["S","A"].includes(grade) && !projected.aOrBetterStyles.includes(style)) projected.aOrBetterStyles.push(style);
+    const earned=evaluateTitles(titleState(score,grade,sim,projected));
+
+    const record={runId:run.id,score,grade,completed,turn:turnReached,stats:{...run.stats},unrest:run.unrest,similarity:sim.percent,similarityReached:sim.reached,style,titleIds:earned.map(t=>t.id),createdAt:new Date().toISOString(),cause:cause?.title||null};
+
+    currentProfile.totalRuns=projected.totalRuns;
+    currentProfile.completedRuns=projected.completedRuns;
+    currentProfile.aOrBetterStyles=projected.aOrBetterStyles;
+    currentProfile.bestScore=Math.max(currentProfile.bestScore||0,score);
+    currentProfile.totalScore=(currentProfile.totalScore||0)+score;
+    currentProfile.titles=Array.from(new Set([...(currentProfile.titles||[]),...earned.map(t=>t.id)]));
+    currentProfile.runs=[...(currentProfile.runs||[]),record];
+    saveLocalProfile();
+
+    if(endpoint) {
+      const sync=await remoteCall("submitRun",{studentNo:currentProfile.studentNo,name:currentProfile.name,pinHash:currentProfile.pinHash,record,earnedTitleIds:earned.map(t=>t.id),aOrBetterStyles:currentProfile.aOrBetterStyles});
+      if(sync?.profile){currentProfile=sync.profile;saveLocalProfile();}
+    }
+    renderResult(record,earned,sim,cause);
+  }
+
+  function resultSummary(style,completed,cause) {
+    if(cause) return `${cause.text} 이번 통치의 선택과 기록은 저장되었습니다. 다음 통치에서 다른 균형을 시도할 수 있습니다.`;
+    const map={균형:"한 영역에만 치우치지 않고 재정·군사·사회적 안정을 고르게 유지했습니다.",경제:"재정과 상공업을 중시한 국가를 만들었습니다. 그 과정에서 다른 영역이 어떤 대가를 치렀는지도 살펴보세요.",군사:"강한 군사력을 중심으로 프랑스를 운영했습니다. 군사적 영향력과 전쟁 비용 사이의 균형이 핵심이었습니다.",특권:"귀족과 특권층의 협조를 중시했습니다. 왕권 안정과 개혁 가능성 사이의 긴장이 나타났습니다.",민생:"민중의 지지와 생활 안정을 중시했습니다. 이를 유지하기 위해 필요한 재정과 군사 부담도 함께 확인해보세요.",식량:"식량 안정과 구휼을 중시했습니다. 국가가 시장과 민생에 개입할 때 생기는 효과를 보여주는 통치였습니다."};
+    return map[classifyStyle()] || "당신만의 방식으로 프랑스를 통치했습니다.";
+  }
+
+  async function renderResult(record,earned,sim,cause) {
+    els.resultYear.textContent=record.completed?"1715":`${eraLabel(record.turn)} · TURN ${record.turn}`;
+    els.resultHeadline.textContent=record.completed?"태양왕의 시대가 끝났다.":"당신의 통치가 끝났다.";
+    els.resultCause.classList.toggle("hidden",!cause); els.resultCause.textContent=cause?cause.title:"";
+    els.resultScore.textContent=record.score; els.resultGrade.textContent=record.grade;
+    const noScore = record.turn < 10;
+    els.resultScoreNote.classList.toggle("hidden",!noScore);
+    els.resultScoreNote.textContent=noScore?"TURN 10 이전 종료 · 점수는 누적되지 않습니다.":"";
+    const main=earned[0] || TITLES.find(t=>t.id==="first_reign");
+    els.resultMainTitle.textContent=main?`「${main.name}」`:"「이름 없는 태양」";
+    els.resultSummary.textContent=resultSummary(record.style,record.completed,cause);
+    els.resultStats.innerHTML=STAT_KEYS.map(k=>`<div class="result-stat">${ICONS[k]}<strong>${record.stats[k]}</strong><span>${STAT_META[k].short}</span></div>`).join("");
+    els.titleCountLabel.textContent=`이번 판 ${earned.length}개 · 보유 ${(currentProfile.titles||[]).length}개`;
+    els.earnedTitles.innerHTML=(earned.length?earned.slice(0,5):[{tier:1,name:"첫 번째 태양"}]).map(t=>`<div class="title-chip"><strong>${escapeHtml(t.name)}</strong><span class="tier">${roman(t.tier)} ${tierName(t.tier)}</span></div>`).join("");
+    els.similarityPercent.textContent=sim.percent===null?"-":`${sim.percent}%`;
+    els.similarityCoverage.textContent=`비교 완료 ${sim.reached} / ${sim.total}개${sim.reached<sim.total?" · 아직 경험하지 않은 항목은 유사도 계산에서 제외됩니다.":""}`;
+    els.historyComparison.innerHTML=sim.rows.map(r=>{
+      const state=r.player===null?"pending":(r.player===r.louis?"match":"diff");
+      const playerText=r.player===null?"미도달":(r.player===r.louis?"✓ 일치":"✕ 다름");
+      const louisText=r.player===null?"루이 14세 기준":"루이 14세 선택";
+      return `<div class="history-row ${state}"><div class="history-label">${escapeHtml(r.label)}</div><div class="history-cell louis-history">${louisText}</div><div class="history-cell player-history"><span class="history-state">${playerText}</span></div></div>`;
+    }).join("");
+    showScreen("resultScreen");
+    const ranks=await getRankings();
+    els.resultBestRank.textContent=formatRank(findRank(ranks.best,currentProfile.studentNo,currentProfile.name));
+    els.resultTotalRank.textContent=formatRank(findRank(ranks.total,currentProfile.studentNo,currentProfile.name));
+  }
+
+  function roman(n){return ["","Ⅰ","Ⅱ","Ⅲ","Ⅳ","Ⅴ"][n]||""}
+  function tierName(n){return ["","일반","고급","희귀","영웅","전설"][n]||""}
+
+  async function getRankings() {
+    if(endpoint){const r=await remoteCall("rankings");if(r?.profiles)return rankingsFromProfiles(r.profiles)}
+    return rankingsFromProfiles(Object.values(getUsers()));
+  }
+  function rankingsFromProfiles(profiles) {
+    const usable=profiles.filter(p=>(p.totalRuns||0)>0);
+    const best=[...usable].sort((a,b)=>(b.bestScore||0)-(a.bestScore||0)||((b.totalScore||0)-(a.totalScore||0)));
+    const total=[...usable].sort((a,b)=>(b.totalScore||0)-(a.totalScore||0)||((b.bestScore||0)-(a.bestScore||0)));
+    return {best,total};
+  }
+  function findRank(list,no,name){const i=list.findIndex(p=>String(p.studentNo)===String(no)&&p.name===name);return i<0?null:{rank:i+1,total:list.length}}
+  function formatRank(r){return r?`${r.rank}위 / ${r.total}명`:"-"}
+
+  function rankingMarkup(list,mode,limit=10) {
+    if(!list.length) return `<div class="empty-state compact">아직 기록된 통치가 없습니다.<br>첫 번째 기록을 기다리고 있습니다.</div>`;
+    return list.slice(0,limit).map((p,i)=>{
+      const top=topTitleIds(p).map(id=>TITLES.find(t=>t.id===id)).filter(Boolean);
+      const isMe=currentProfile&&String(p.studentNo)===String(currentProfile.studentNo)&&p.name===currentProfile.name;
+      const titleMarkup=top.length
+        ? top.map(t=>`<span class="rank-title tier-${t.tier}">「${escapeHtml(t.name)}」</span>`).join("")
+        : `<span class="rank-title tier-1">대표 칭호 없음</span>`;
+      return `<div class="rank-row ${isMe?"me":""}"><div class="rank-num">${i+1}</div><div><div class="rank-name">${escapeHtml(p.studentNo)} ${escapeHtml(p.name)}</div><div class="rank-meta">${mode==="best"?`완주 ${p.completedRuns||0}회 · 플레이 ${p.totalRuns||0}회`:`플레이 ${p.totalRuns||0}회 · 최고 ${p.bestScore||0}점`}</div><div class="rank-titles">${titleMarkup}</div></div><div class="rank-score"><strong>${mode==="best"?(p.bestScore||0):(p.totalScore||0)}</strong><span>점</span></div></div>`;
+    }).join("");
+  }
+
+  async function renderHomeRanking(mode=rankingMode) {
+    rankingMode=mode;
+    document.querySelectorAll(".home-ranking-tab").forEach(b=>b.classList.toggle("active",b.dataset.mode===mode));
+    if(!els.homeRankingList) return;
+    els.homeRankingList.innerHTML=`<div class="empty-state compact">랭킹을 불러오는 중입니다.</div>`;
+    const ranks=await getRankings();
+    els.homeRankingList.innerHTML=rankingMarkup(ranks[mode],mode,5);
+  }
+
+  async function renderLoginRanking(mode=loginRankingMode) {
+    loginRankingMode=mode;
+    document.querySelectorAll(".login-ranking-tab").forEach(b=>b.classList.toggle("active",b.dataset.mode===mode));
+    if(!els.loginRankingList) return;
+    els.loginRankingList.innerHTML=`<div class="empty-state compact">랭킹을 불러오는 중입니다.</div>`;
+    const ranks=await getRankings();
+    els.loginRankingList.innerHTML=rankingMarkup(ranks[mode],mode,10);
+  }
+
+  function renderTitleBook(){
+    const owned=new Set(currentProfile?.titles||[]);
+    els.titleBookList.innerHTML=[...TITLES].sort((a,b)=>b.tier-a.tier||b.weight-a.weight).map(t=>`<div class="book-title ${owned.has(t.id)?"":"locked"}"><div class="book-title-top"><strong>${owned.has(t.id)?"":"🔒 "}${escapeHtml(t.name)}</strong><span class="tier">${roman(t.tier)} ${tierName(t.tier)}</span></div><p>${escapeHtml(TITLE_HINTS[t.id]||"숨겨진 조건")}</p></div>`).join("");
+  }
+
+  let modalConfirmHandler = null;
+  function showConfirmModal({title,text,kicker="확인",confirmText="확인",cancelText="취소",onConfirm}) {
+    modalConfirmHandler=typeof onConfirm==="function"?onConfirm:null;
+    els.modalKicker.textContent=kicker;
+    els.modalTitle.textContent=title;
+    els.modalText.textContent=text;
+    els.modalConfirm.textContent=confirmText;
+    els.modalCancel.textContent=cancelText;
+    els.modal.classList.remove("hidden");
+    setTimeout(()=>els.modalCancel.focus(),0);
+  }
+  function showNoticeModal({title,text,kicker="안내",confirmText="확인"}) {
+    modalConfirmHandler=null;
+    els.modalKicker.textContent=kicker;
+    els.modalTitle.textContent=title;
+    els.modalText.textContent=text;
+    els.modalConfirm.textContent=confirmText;
+    els.modalCancel.classList.add("hidden");
+    els.modal.classList.remove("hidden");
+    setTimeout(()=>els.modalConfirm.focus(),0);
+  }
+  function hideModal(){els.modal.classList.add("hidden");els.modalCancel.classList.remove("hidden");modalConfirmHandler=null;}
+  function returnToLogin(){
+    // 같은 기기에서 통치를 마치고 로그인 화면으로 돌아올 때는
+    // 방금 사용한 학번·이름·PIN을 그대로 유지한다.
+    // (새로고침/브라우저 종료 후까지 PIN을 영구 저장하지는 않는다.)
+    const keepNo = els.studentNo.value || currentProfile?.studentNo || "";
+    const keepName = els.studentName.value || currentProfile?.name || "";
+    const keepPin = els.studentPin.value || "";
+
+    currentUser=null; currentProfile=null; run=null;
+    sessionRemove(SESSION_KEY);
+
+    els.studentNo.value=keepNo;
+    els.studentName.value=keepName;
+    els.studentPin.value=keepPin;
+    els.loginMessage.textContent="";
+    showScreen("loginScreen");
+    renderLoginRanking(loginRankingMode);
+    setTimeout(()=>{
+      if (els.studentPin.value) els.loginForm.querySelector('button[type="submit"]')?.focus();
+      else els.studentPin.focus();
+    },0);
+  }
+  function escapeHtml(s){return String(s??"").replace(/[&<>'"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"})[c])}
+
+  // Events
+  els.loginForm.addEventListener("submit",async e=>{
+    e.preventDefault(); els.loginMessage.textContent="";
+    const no=els.studentNo.value.trim(), name=els.studentName.value.trim(), pin=els.studentPin.value.trim();
+    if(!/^\d{3,6}$/.test(no)) return els.loginMessage.textContent="학번은 숫자로 입력해 주세요.";
+    if(!name) return els.loginMessage.textContent="이름을 입력해 주세요.";
+    if(!/^\d{4}$/.test(pin)) return els.loginMessage.textContent="PIN은 숫자 4자리입니다.";
+    try{await login(no,name,pin);updateHome();showScreen("homeScreen");}
+    catch(err){els.loginMessage.textContent=err.message||"로그인하지 못했습니다."}
+  });
+  els.logoutBtn.addEventListener("click",returnToLogin);
+  els.startBtn.addEventListener("click",newRun); els.playAgainBtn.addEventListener("click",()=>{updateHome();showScreen("homeScreen")});
+  els.homeBtn.addEventListener("click",returnToLogin);
+  els.quitRunBtn.addEventListener("click",()=>{
+    if(!run||run.ended) return;
+    const beforeTen=run.turn<10;
+    showConfirmModal({
+      kicker:"통치 종료",
+      title:"정말 통치를 끝내시겠습니까?",
+      text:beforeTen
+        ?`현재 TURN ${run.turn}입니다. TURN 10 이전에 통치를 끝내면 이번 판 점수는 0점으로 기록됩니다. 선택 유사도와 플레이 기록은 남습니다.`
+        :`현재 TURN ${run.turn}입니다. 지금까지의 점수와 선택 유사도는 정상적으로 기록됩니다.`,
+      confirmText:"통치 종료",
+      cancelText:"계속 통치",
+      onConfirm:()=>finishRun(false,{title:"왕위에서 물러나다",text:"당신은 스스로 통치를 끝냈습니다."})
+    });
+  });
+  document.querySelectorAll(".home-ranking-tab").forEach(b=>b.addEventListener("click",()=>renderHomeRanking(b.dataset.mode)));
+  document.querySelectorAll(".login-ranking-tab").forEach(b=>b.addEventListener("click",()=>renderLoginRanking(b.dataset.mode)));
+  els.titleBookBtn.addEventListener("click",()=>{renderTitleBook();showScreen("titleBookScreen")});
+  els.titleBookBackBtn.addEventListener("click",()=>{updateHome();showScreen("homeScreen")});
+  els.modalCancel.addEventListener("click",hideModal);
+  els.modalConfirm.addEventListener("click",()=>{const fn=modalConfirmHandler;hideModal();if(fn)fn();});
+  els.modal.addEventListener("click",e=>{if(e.target===els.modal)hideModal()});
+  els.decisionCard.addEventListener("pointerdown",pointerDown); els.decisionCard.addEventListener("pointermove",pointerMove); els.decisionCard.addEventListener("pointerup",pointerUp); els.decisionCard.addEventListener("pointercancel",pointerUp);
+  els.decisionCard.addEventListener("keydown",e=>{if(e.key==="ArrowLeft")commitChoice("left");if(e.key==="ArrowRight")commitChoice("right")});
+
+  window.addEventListener("error",e=>console.error("App error:",e.error||e.message));
+  renderLoginRanking("best");
+})();
+
+</script>
+</body>
+</html>
